@@ -1,6 +1,7 @@
 from jbi100_app.main import app
 from jbi100_app.views.menu import make_menu_layout
 from jbi100_app.views.scatterplot import Scatterplot
+from jbi100_app.data import get_data
 
 from dash import html
 import plotly.express as px
@@ -8,8 +9,8 @@ from dash.dependencies import Input, Output
 
 
 if __name__ == '__main__':
-    # Create data
-    df = px.data.iris()
+    # Load your data
+    df = get_data()
 
     # Instantiate custom views
     scatterplot1 = Scatterplot("Scatterplot 1", 'sepal_length', 'sepal_width', df)
@@ -55,4 +56,4 @@ if __name__ == '__main__':
         return scatterplot2.update(selected_color, selected_data)
 
 
-    app.run_server(debug=False, dev_tools_ui=False)
+    app.run(debug=True)
