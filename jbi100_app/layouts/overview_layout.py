@@ -11,8 +11,8 @@ def overview_layout():
             html.Div(
                 className="overview-content",
                 children=[
-                    html.Div(global_metrics(), className="left-panel"),
-                    html.Div(map_view(), className="right-panel"),
+                    html.Div(global_metrics(), id="global-metrics-wrapper"),
+                    html.Div(map_view(), id="global-map-wrapper"),
                 ]
             )
         ]

@@ -11,26 +11,12 @@ def detailed_layout():
         children=[
             html.H1("Selected Region"),
             html.Div(
-                className="region-main-grid",
+                className="detailed-content",
                 children=[
-                    html.Div(
-                        className="left-column",
-                        children=[
-                            complex_metrics(),
-                            html.Div("Main Metric Graph"),
-                        ]
-                    ),
-                    html.Div(
-                        className="center-column",
-                        children=[
-                            map_view(),
-                            detailed_info()
-                        ]
-                    ),
-                    html.Div(
-                        ranking_panel(),
-                        className="right-column"
-                    )
+                    html.Div(complex_metrics(), id="complex-metrics-wrapper"),
+                    html.Div(map_view(), id="region-map-wrapper"),
+                    html.Div(detailed_info(), id="detailed-info-wrapper"),
+                    html.Div(ranking_panel(), id="ranking-wrapper",)
                 ]
             )
         ]

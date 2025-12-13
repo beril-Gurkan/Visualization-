@@ -3,5 +3,5 @@ from dash import html
 def global_metrics():
     return html.Div(
         "Global Metrics Panel",
-        className="global-metrics"
+        className="global-metrics panel"
     )
