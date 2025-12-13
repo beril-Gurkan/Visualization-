@@ -12,8 +12,6 @@ app.layout = html.Div(
     [
         dcc.Store(id="selected_region", data=None),
 
-        html.Button(id="btn-toggle-view", n_clicks=0),
-
         html.Div(
             id="layout-container",
             children=[

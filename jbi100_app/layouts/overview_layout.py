@@ -1,5 +1,5 @@
 from dash import html
-from jbi100_app.views.map_view import map_view
+from jbi100_app.views.global_map_view import global_map_view
 from jbi100_app.views.global_metrics import global_metrics
 
 def overview_layout():
@@ -12,7 +12,7 @@ def overview_layout():
                 className="overview-content",
                 children=[
                     html.Div(global_metrics(), id="global-metrics-wrapper"),
-                    html.Div(map_view(), id="global-map-wrapper"),
+                    html.Div(global_map_view(), id="global-map-wrapper"),
                 ]
             )
         ]

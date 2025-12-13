@@ -1,25 +1,6 @@
-from dash.dependencies import Input, Output
+from dash import ctx
+from dash.dependencies import Input, Output, State
 from jbi100_app.main import app
-
-
-@app.callback(
-    Output("selected_region", "data"),
-    Input("btn-toggle-view", "n_clicks"),
-    prevent_initial_call=True
-)
-def toggle_view(n_clicks):
-    return "this region" if n_clicks % 2 == 1 else None
-
-
-@app.callback(
-    Output("btn-toggle-view", "children"),
-    Input("selected_region", "data")
-)
-def update_button_label(view_state):
-    if view_state:
-        return "Back to global view"
-    return "Select region"
-
 
 @app.callback(
     Output("overview-layout", "style"),
@@ -30,3 +11,17 @@ def toggle_layout_visibility(view_state):
     if view_state:
         return {"display": "none"}, {"display": "block"}
     return {"display": "block"}, {"display": "none"}
+
+@app.callback(
+    Output("selected_region", "data"),
+    Input("global-map-button", "n_clicks"),
+    Input("region-map-button", "n_clicks"),
+    State("selected_region", "data"),
+    prevent_initial_call=True
+)
+def update_selected_region(global_clicks, region_clicks, current_state):
+    if ctx.triggered_id == "global-map-button":
+        return "selected_region"
+    elif ctx.triggered_id == "region-map-button":
+        return None
+    return current_state
