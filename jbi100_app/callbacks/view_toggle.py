@@ -5,12 +5,13 @@ from jbi100_app.main import app
 @app.callback(
     Output("overview-layout", "style"),
     Output("detailed-layout", "style"),
+    Output("title", "children"),
     Input("selected_region", "data")
 )
 def toggle_layout_visibility(view_state):
     if view_state:
-        return {"display": "none"}, {"display": "block"}
-    return {"display": "block"}, {"display": "none"}
+        return {"display": "none"}, {"display": "grid"}, "Regional Overview"
+    return {"display": "grid"}, {"display": "none"}, "Global Overview"
 
 @app.callback(
     Output("selected_region", "data"),

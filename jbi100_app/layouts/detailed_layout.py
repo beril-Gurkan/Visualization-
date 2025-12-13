@@ -9,15 +9,9 @@ def detailed_layout():
         id="detailed-layout",
         className="layout",
         children=[
-            html.H1("Selected Region"),
-            html.Div(
-                className="detailed-content",
-                children=[
-                    html.Div(complex_metrics(), id="complex-metrics-wrapper"),
-                    html.Div(region_map_view(), id="region-map-wrapper"),
-                    html.Div(detailed_info(), id="detailed-info-wrapper"),
-                    html.Div(ranking_panel(), id="ranking-wrapper",)
-                ]
-            )
+            html.Div(complex_metrics(), id="complex-metrics-wrapper"),
+            html.Div(region_map_view(), id="region-map-wrapper"),
+            html.Div(detailed_info(), id="detailed-info-wrapper"),
+            html.Div(ranking_panel(), id="ranking-wrapper",)
         ]
     )

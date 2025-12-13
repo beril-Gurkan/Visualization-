@@ -7,13 +7,7 @@ def overview_layout():
         id="overview-layout",
         className="layout",
         children=[
-            html.H1("Global Overview"),
-            html.Div(
-                className="overview-content",
-                children=[
-                    html.Div(global_metrics(), id="global-metrics-wrapper"),
-                    html.Div(global_map_view(), id="global-map-wrapper"),
-                ]
-            )
+            html.Div(global_metrics(), id="global-metrics-wrapper"),
+            html.Div(global_map_view(), id="global-map-wrapper"),
         ]
     )
