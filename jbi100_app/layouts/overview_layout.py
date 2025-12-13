@@ -1,0 +1,19 @@
+from dash import html
+from jbi100_app.views.map_view import map_view
+from jbi100_app.views.global_metrics import global_metrics
+
+def overview_layout():
+    return html.Div(
+        id="overview-layout",
+        className="layout",
+        children=[
+            html.H1("Global Overview"),
+            html.Div(
+                className="overview-content",
+                children=[
+                    html.Div(global_metrics(), className="left-panel"),
+                    html.Div(map_view(), className="right-panel"),
+                ]
+            )
+        ]
+    )

@@ -1,58 +1,70 @@
+# app.py
 from jbi100_app.main import app
-from jbi100_app.views.menu import make_menu_layout
-from jbi100_app.views.scatterplot import Scatterplot
+from jbi100_app.layouts.overview_layout import overview_layout
+from jbi100_app.layouts.detailed_layout import detailed_layout
 
-from dash import html
-import plotly.express as px
+from dash import html, dcc, callback_context
 from dash.dependencies import Input, Output
 
 
-if __name__ == '__main__':
-    # Create data
-    df = px.data.iris()
+app.layout = html.Div(
+    [
+        dcc.Store(id="view-state", data=None),
 
-    # Instantiate custom views
-    scatterplot1 = Scatterplot("Scatterplot 1", 'sepal_length', 'sepal_width', df)
-    scatterplot2 = Scatterplot("Scatterplot 2", 'petal_length', 'petal_width', df)
+        html.Button(
+            id="btn-toggle-view",
+            n_clicks=0
+        ),
 
-    app.layout = html.Div(
-        id="app-container",
-        children=[
-            # Left column
-            html.Div(
-                id="left-column",
-                className="three columns",
-                children=make_menu_layout()
-            ),
+        html.Div(
+            id="layout-container",
+            children=[
+                overview_layout(),
+                detailed_layout()
+            ]
+        )
+    ]
+)
 
-            # Right column
-            html.Div(
-                id="right-column",
-                className="nine columns",
-                children=[
-                    scatterplot1,
-                    scatterplot2
-                ],
-            ),
-        ],
+
+# Toggle view-state
+@app.callback(
+    Output("view-state", "data"),
+    Input("btn-toggle-view", "n_clicks"),
+    prevent_initial_call=True
+)
+def toggle_view(n_clicks):
+    return "country" if n_clicks % 2 == 1 else None
+
+
+# Update button label
+@app.callback(
+    Output("btn-toggle-view", "children"),
+    Input("view-state", "data")
+)
+def update_button_label(view_state):
+    if view_state:
+        return "Back to global view"
+    return "Select region"
+
+
+# Toggle layout visibility
+@app.callback(
+    Output("overview-layout", "style"),
+    Output("detailed-layout", "style"),
+    Input("view-state", "data")
+)
+def toggle_layout_visibility(view_state):
+    if view_state:
+        return (
+            {"display": "none"},
+            {"display": "block"}
+        )
+    return (
+        {"display": "block"},
+        {"display": "none"}
     )
 
-    # Define interactions
-    @app.callback(
-        Output(scatterplot1.html_id, "figure"), [
-        Input("select-color-scatter-1", "value"),
-        Input(scatterplot2.html_id, 'selectedData')
-    ])
-    def update_scatter_1(selected_color, selected_data):
-        return scatterplot1.update(selected_color, selected_data)
 
-    @app.callback(
-        Output(scatterplot2.html_id, "figure"), [
-        Input("select-color-scatter-2", "value"),
-        Input(scatterplot1.html_id, 'selectedData')
-    ])
-    def update_scatter_2(selected_color, selected_data):
-        return scatterplot2.update(selected_color, selected_data)
-
-
+if __name__ == "__main__":
     app.run(debug=False, dev_tools_ui=False)
