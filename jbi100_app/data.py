@@ -18,7 +18,14 @@ def get_data():
     df = df.drop(columns=['coal_metric_tons', 'petroleum_bbl_per_day', 'refined_petroleum_products_bbl_per_day', 
                           'refined_petroleum_exports_bbl_per_day', 'refined_petroleum_imports_bbl_per_day', 
                           'natural_gas_cubic_meters', 'Geographic_Coordinates', 'Highest_Elevation', 'Lowest_Elevation', 
-                          'airports_unpaved_runways_count', 'heliports_count'])
+                          'airports_unpaved_runways_count', 'heliports_count', 'Water_Area', 'gas_pipelines_km',
+                          'oil_pipelines_km', 'refined_products_pipelines', 'water_pipelines_km', 'Forest_Land',
+                          'Male_Literacy_Rate', 'Female_Literacy_Rate', 'Sex_Ratio', 'Death_Rate',
+                          'Land_Boundaries', 'Coastline', 'Ohter_Land', 'Agricultural_Land', 'Arable_Land (%% of Total Agricultural Land)',
+                          'Permanent_Crops (%% of Total Agricultural Land)', 'Permanent_Pasture (%% of Total Agricultural Land)', 
+                          'refined_products_pipelines_km', 'Irrigated_Land', 'Other_Land', 'Infant_Mortality_Rate', 
+                          'Total_Fertility_Rate', 'Net_Migration_Rate', 'Exchange_Rate_per_USD', 
+                          'carbon_dioxide_emissions_Mt'], errors='ignore')
     
     # columns that should stay as strings
     text_columns = ['Country', 'Fiscal_Year']
