@@ -11,6 +11,3 @@ __pycache__/
 venv/
 .venv/
 
-# Dash / cache
-*.log
-
