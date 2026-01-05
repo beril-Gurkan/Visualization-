@@ -1,136 +1,208 @@
+/* =========================
+   Base
+========================= */
 body {
     background-color: #f9f9f9;
     color: #333333;
     font-family: "Helvetica Neue", Arial, sans-serif;
     font-size: 15px;
     margin: 0px;
-}
-
-#app-container {
+  }
+  
+  #app-container {
     position: relative;
     min-height: 100vh;
-}
-
-#main-content {
+  }
+  
+  #main-content {
     padding: 20px;
-    padding-right: 320px; /* Make room for the metrics panel */
+    padding-right: 320px; /* room for fixed metrics panel */
     min-height: 100vh;
-}
-
-#left-column {
+  }
+  
+  #left-column {
     padding: 20px 2rem;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-}
-
-#right-column {
+  }
+  
+  #right-column {
     background-color: #f4f4f4;
     padding: 0rem 2rem;
     min-height: 100vh;
-}
-
-h5 {
+  }
+  
+  h5 {
     color: #2c8cff;
     font-weight: 300;
-}
-
-#intro {
+  }
+  
+  #intro {
     margin: 20px 0px;
     text-align: justify;
-}
-
-#control-card label {
+  }
+  
+  #control-card label {
     font-weight: bold;
-}
-
-.graph_card {
+  }
+  
+  .graph_card {
     background-color: white;
     border-radius: 0.675rem;
     padding: 1rem;
     margin: auto;
     margin-top: 20px;
-}
-
-.graph_card h6 {
-    margin:  0 7px;
+  }
+  
+  .graph_card h6 {
+    margin: 0 7px;
     padding-bottom: 7px;
-    border-bottom:  1px solid #ccc;
-}
-
-/* Globe container */
-.globe-container {
+    border-bottom: 1px solid #ccc;
+  }
+  
+  /* Globe container */
+  .globe-container {
     height: calc(100vh - 60px);
-}
-
-/* Metrics Panel - Bottom Right */
-#metrics-panel-container {
+  }
+  
+  /* =========================
+     Metrics Panel – fixed right
+  ========================= */
+  #metrics-panel-container {
     position: fixed;
+    top: 20px;              /* <- make it look like prototype (top right) */
     bottom: 20px;
     right: 20px;
-    width: 280px;
-    max-height: calc(100vh - 60px);
+    width: 320px;
+    max-height: calc(100vh - 40px);
     overflow-y: auto;
     z-index: 1000;
-}
-
-#metrics-panel {
-    background-color: white;
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-}
-
-#metrics-panel h6 {
+  }
+  
+  /* Outer panel shell */
+  #metrics-panel {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 18px 18px 16px 18px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+  }
+  
+  /* "Filters" header like prototype */
+  #metrics-panel .panel-title {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+    color: #111;
+  }
+  
+  #metrics-panel .panel-subtitle {
+    margin: 6px 0 0 0;
+    font-size: 13px;
+    color: rgba(0, 0, 0, 0.55);
+  }
+  
+  /* Divider under Filters header */
+  #metrics-panel .panel-header-divider {
+    height: 1px;
+    background: rgba(0, 0, 0, 0.08);
+    margin: 14px 0 14px 0;
+  }
+  
+  /* Inner card: "Metric selection" */
+  #metrics-panel .metric-card {
+    background: #ffffff;
+    border-radius: 14px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    padding: 14px;
+  }
+  
+  #metrics-panel .metric-card-title {
     margin: 0 0 10px 0;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #2c8cff;
-    color: #2c8cff;
-    font-size: 16px;
-}
-
-.metrics-description {
-    font-size: 12px;
-    color: #666;
-    margin-bottom: 15px;
-}
-
-.metrics-checklist {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+    color: #111;
+  }
+  
+  /* =========================
+     Checklist styling (prototype-like)
+  ========================= */
+  .metrics-checklist {
     display: flex;
     flex-direction: column;
-}
-
-.metrics-checklist label {
-    padding: 8px 12px;
-    border-radius: 6px;
-    transition: background-color 0.2s;
-    font-size: 13px;
-}
-
-.metrics-checklist label:hover {
-    background-color: #f0f7ff;
-}
-
-.metrics-checklist input:checked + label,
-.metrics-checklist label:has(input:checked) {
-    background-color: #e3f2fd;
-}
-
-/* Custom scrollbar for metrics panel */
-#metrics-panel-container::-webkit-scrollbar {
-    width: 6px;
-}
-
-#metrics-panel-container::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 3px;
-}
-
-#metrics-panel-container::-webkit-scrollbar-thumb {
-    background: #c1c1c1;
-    border-radius: 3px;
-}
-
-#metrics-panel-container::-webkit-scrollbar-thumb:hover {
-    background: #a1a1a1;
-}
+    gap: 4px;
+    margin-top: 6px;
+  }
+  
+  /* Dash renders each option as: <label><input> text</label> */
+  .metrics-checklist label {
+    display: flex !important;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    user-select: none;
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.78);
+    border: 1px solid transparent;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+  }
+  
+  .metrics-checklist label:hover {
+    background: rgba(0, 0, 0, 0.03);
+    border-color: rgba(0, 0, 0, 0.08);
+  }
+  
+  /* checkbox look (pink like your screenshot) */
+  .metrics-checklist input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #e64b8a;
+  }
+  
+  /* Selected row highlight */
+  .metrics-checklist label:has(input:checked) {
+    background: rgba(230, 75, 138, 0.10);
+    border-color: rgba(230, 75, 138, 0.25);
+  }
+  
+  /* Group header rows: your disabled options "__header__..." */
+  .metrics-checklist label:has(input:disabled) {
+    cursor: default;
+    padding: 10px 0 6px 0;
+    border: none !important;
+    background: transparent !important;
+    font-size: 12px;
+    font-weight: 700;
+    color: rgba(0, 0, 0, 0.55);
+    letter-spacing: 0.3px;
+  }
+  
+  /* Hide the checkbox for header rows */
+  .metrics-checklist input:disabled {
+    display: none;
+  }
+  
+  /* =========================
+     Scrollbar polish for the fixed panel
+  ========================= */
+  #metrics-panel-container::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  #metrics-panel-container::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  #metrics-panel-container::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.18);
+    border-radius: 10px;
+  }
+  
+  #metrics-panel-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.28);
+  }

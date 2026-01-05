@@ -1,0 +1,15 @@
+metric,total_rows,missing_rows,missing_percent
+waterways_km,259,142,54.826254826254825
+railways_km,259,131,50.57915057915058
+Total_Literacy_Rate,259,91,35.13513513513514
+Public_Debt_percent_of_GDP,259,79,30.501930501930502
+Youth_Unemployment_Rate_percent,259,57,22.00772200772201
+electricity_generating_capacity_kW,259,57,22.00772200772201
+airports_unpaved_runways_count,259,55,21.235521235521233
+electricity_access_percent,259,43,16.602316602316602
+Unemployment_Rate_percent,259,40,15.444015444015443
+Real_GDP_PPP_billion_USD,259,39,15.057915057915059
+Real_GDP_per_Capita_USD,259,39,15.057915057915059
+airports_paved_runways_count,259,32,12.355212355212355
+Population_Growth_Rate,259,22,8.494208494208493
+Total_Population,259,22,8.494208494208493
