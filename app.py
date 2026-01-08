@@ -4,22 +4,26 @@ from jbi100_app.layouts.detailed_layout import detailed_layout
 
 from dash import html, dcc
 
-# Import callbacks
+# callbacks (must be imported so Dash registers them)
 import jbi100_app.callbacks.view_toggle
+import jbi100_app.callbacks.ranking_callbacks
+import jbi100_app.callbacks.detail_callbacks
+import jbi100_app.callbacks.region_map_callbacks   # for the regional map
 
 
 app.layout = html.Div(
     [
         dcc.Store(id="selected_region", data=None),
+        dcc.Store(id="selected_country", data=None),
 
         html.Div(
             id="layout-container",
             children=[
                 html.H1("Global Overview", id="title"),
                 overview_layout(),
-                detailed_layout()
-            ]
-        )
+                detailed_layout(),
+            ],
+        ),
     ]
 )
 
