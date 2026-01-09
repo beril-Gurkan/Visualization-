@@ -25,36 +25,49 @@ def _zscore(s: pd.Series) -> pd.Series:
     return (s - mu) / sd
 
 
-def _composite_score(df: pd.DataFrame) -> pd.Series:
-    # Outlier-robust composite: winsorize + z-score + average, rescaled to 0..100.
-    # Higher better: GDPpc, literacy, electricity
-    # Lower better: unemployment, debt
-    components = [
-        ("Real_GDP_per_Capita_USD", +1, True),
-        ("Total_Literacy_Rate", +1, False),
-        ("electricity_access_percent", +1, False),
-        ("Unemployment_Rate_percent", -1, False),
-        ("Public_Debt_percent_of_GDP", -1, False),
-    ]
-
-    zs = []
-    for col, direction, log1p in components:
-        if col not in df.columns:
-            continue
-        base = pd.to_numeric(df[col], errors="coerce")
-        if log1p:
-            base = np.log1p(base)
-        base = _winsorize(base)
-        zs.append(_zscore(base) * direction)
-
-    if not zs:
-        return pd.Series(np.nan, index=df.index)
-
-    score = pd.concat(zs, axis=1).mean(axis=1)
-    mn, mx = score.min(), score.max()
-    if pd.isna(mn) or pd.isna(mx) or mx == mn:
-        return pd.Series(50.0, index=df.index)
-    return (score - mn) / (mx - mn) * 100.0
+def _compute_complex_metrics_scores(w_asf, w_iec, w_scc, w_wsi, w_ers):
+    """Compute weighted complex metrics scores for all countries."""
+    from jbi100_app.data import (
+        available_skilled_workforce,
+        industrial_energy_capacity,
+        supply_chain_connectivity_score,
+        wage_sustainability_index,
+        economic_resilience_score,
+    )
+    
+    # Normalize weights
+    total = w_asf + w_iec + w_scc + w_wsi + w_ers
+    if total == 0:
+        w_asf = w_iec = w_scc = w_wsi = w_ers = 0.2
+    else:
+        w_asf, w_iec, w_scc, w_wsi, w_ers = w_asf/total, w_iec/total, w_scc/total, w_wsi/total, w_ers/total
+    
+    # Compute each metric
+    metrics = {
+        'ASF': available_skilled_workforce(),
+        'IEC': industrial_energy_capacity(),
+        'SCC': supply_chain_connectivity_score(),
+        'WSI': wage_sustainability_index(),
+        'ERS': economic_resilience_score(),
+    }
+    
+    # Combine into weighted score
+    scores = pd.Series(dtype=float)
+    for country in set().union(*[s.index for s in metrics.values()]):
+        score = (
+            metrics['ASF'].get(country, 0) * w_asf +
+            metrics['IEC'].get(country, 0) * w_iec +
+            metrics['SCC'].get(country, 0) * w_scc +
+            metrics['WSI'].get(country, 0) * w_wsi +
+            metrics['ERS'].get(country, 0) * w_ers
+        )
+        scores[country] = score
+    
+    # Scale to 0-100
+    if len(scores) > 0 and scores.max() > scores.min():
+        scores = (scores - scores.min()) / (scores.max() - scores.min()) * 100
+    
+    return scores
 
 
 @app.callback(
@@ -65,8 +78,16 @@ def _composite_score(df: pd.DataFrame) -> pd.Series:
     Input("ranking-order", "value"),
     Input("ranking-top-n", "value"),
     Input("selected_country", "data"),
+    Input("weight-asf", "value"),
+    Input("weight-iec", "value"),
+    Input("weight-scc", "value"),
+    Input("weight-wsi", "value"),
+    Input("weight-ers", "value"),
 )
-def update_ranking(selected_region, metric, order, top_n, selected_country):
+def update_ranking(selected_region, metric, order, top_n, selected_country, w_asf, w_iec, w_scc, w_wsi, w_ers):
+    """Update ranking bar chart based on selected metric and weights."""
+    
+    # Empty state
     if not selected_region:
         fig = go.Figure()
         fig.update_layout(
@@ -77,6 +98,7 @@ def update_ranking(selected_region, metric, order, top_n, selected_country):
         )
         return "Ranking (select a region)", fig
 
+    # Get data for selected region
     df = attach_country_meta(get_data())
     df = df[df["region"] == selected_region].copy()
 
@@ -86,51 +108,64 @@ def update_ranking(selected_region, metric, order, top_n, selected_country):
             margin=dict(l=10, r=10, t=10, b=10),
             xaxis=dict(visible=False),
             yaxis=dict(visible=False),
-            annotations=[dict(text=f"No countries for region: {selected_region}", showarrow=False, x=0.5, y=0.5)],
+            annotations=[dict(text=f"No countries in {selected_region}", showarrow=False, x=0.5, y=0.5)],
         )
         return f"Ranking — {selected_region}", fig
 
-    if metric == "Composite_Score":
-        df["value"] = _composite_score(df)
-        x_title = "Composite Score (0–100)"
+    # Compute values based on selected metric
+    if metric == "Complex_Metrics":
+        # Compute complex metrics with current slider weights
+        scores = _compute_complex_metrics_scores(w_asf, w_iec, w_scc, w_wsi, w_ers)
+        df["value"] = df["Country"].map(scores)
+        x_title = "Complex Metrics (0–100)"
+        
     else:
-        if metric not in df.columns:
-            df["value"] = np.nan
-        else:
-            df["value"] = pd.to_numeric(df[metric], errors="coerce")
+        # Standard metric from dataframe
+        df["value"] = pd.to_numeric(df.get(metric, pd.Series(dtype=float)), errors="coerce")
         x_title = metric.replace("_", " ")
 
+    # Filter out NaN values
     df = df.dropna(subset=["value"]).copy()
+    
     if df.empty:
         fig = go.Figure()
         fig.update_layout(
             margin=dict(l=10, r=10, t=10, b=10),
             xaxis=dict(visible=False),
             yaxis=dict(visible=False),
-            annotations=[dict(text="No values for this metric in this region.", showarrow=False, x=0.5, y=0.5)],
+            annotations=[dict(text="No data for this metric", showarrow=False, x=0.5, y=0.5)],
         )
         return f"Ranking — {selected_region}", fig
 
+    # Sort and limit to top N
     ascending = (order == "asc")
     df = df.sort_values("value", ascending=ascending).head(int(top_n))
+    
+    # Reverse the order for display (so highest is at top of chart)
+    df = df.iloc[::-1]
 
-    line_width = [3 if (selected_country and c == selected_country) else 0 for c in df["Country"]]
+    # Highlight selected country
+    colors = ["#636EFA" if not selected_country or c != selected_country else "#EF553B" 
+              for c in df["Country"]]
 
+    # Create bar chart
     fig = go.Figure(
         go.Bar(
             x=df["value"],
             y=df["country_display"],
             orientation="h",
-            customdata=np.stack([df["Country"]], axis=-1),
-            hovertemplate="%{y}<br>%{x}<extra></extra>",
-            marker=dict(line=dict(width=line_width)),
+            customdata=df["Country"].values.reshape(-1, 1),
+            hovertemplate="%{y}: %{x:.2f}<extra></extra>",
+            marker=dict(color=colors),
         )
     )
+    
     fig.update_layout(
         margin=dict(l=10, r=10, t=10, b=10),
         xaxis_title=x_title,
         yaxis_title="",
         height=520,
+        showlegend=False,
     )
 
     return f"Ranking — {selected_region}", fig

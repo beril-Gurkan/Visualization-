@@ -2,6 +2,7 @@ from dash import html, dcc
 
 
 def ranking_panel():
+    """Interactive ranking panel with customizable metrics, sort order, and top N selection."""
     return html.Div(
         className="panel",
         style={
@@ -17,9 +18,9 @@ def ranking_panel():
             dcc.Dropdown(
                 id="ranking-metric",
                 clearable=False,
-                value="Composite_Score",
+                value="Complex_Metrics",
                 options=[
-                    {"label": "Composite Score (robust)", "value": "Composite_Score"},
+                    {"label": "Complex Metrics (Custom Weights)", "value": "Complex_Metrics"},
                     {"label": "GDP per Capita (USD)", "value": "Real_GDP_per_Capita_USD"},
                     {"label": "Literacy Rate (%)", "value": "Total_Literacy_Rate"},
                     {"label": "Electricity Access (%)", "value": "electricity_access_percent"},
