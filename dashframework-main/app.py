@@ -7,17 +7,12 @@ from dash.dependencies import Input, Output
 import pandas as pd
 
 
-
-# Processed data path
-
-DATA_PATH = "data_sets/processed/countries_processed.csv"
+DATA_PATH = "../data_sets/processed/countries_processed.csv"
 df = pd.read_csv(DATA_PATH)
 
 if "Country" not in df.columns:
     raise ValueError("countries_processed.csv must contain a 'Country' column.")
 
-
-#Metrics chosen for scatterplot
 METRIC_COLUMNS = [
     "GDP__norm",
     "Unemployment__norm_inv",
@@ -43,11 +38,9 @@ if len(default_selected) < 2:
 x0, y0 = default_selected[0], default_selected[1]
 
 plot = Scatterplot("Country Comparison", x0, y0, df)
+
+# initial figure so it renders immediately
 plot.children[1].figure = plot.update(x0, y0, None)
-
-
-
-# Layout
 
 app.layout = html.Div(
     id="app-container",
@@ -63,9 +56,6 @@ app.layout = html.Div(
     ],
 )
 
-
-
-# Callback: update plot when metrics change or selection changes
 
 @app.callback(
     Output(plot.html_id, "figure"),
