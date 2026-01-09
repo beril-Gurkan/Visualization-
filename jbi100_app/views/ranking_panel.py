@@ -1,68 +1,62 @@
-from dash import html, dcc, callback, Input, Output
-import pandas as pd
-from jbi100_app.data import (
-    available_skilled_workforce,
-    industrial_energy_capacity,
-    supply_chain_connectivity_score,
-    wage_sustainability_index,
-    economic_resilience_score,
-)
+from dash import html, dcc
 
 
 def ranking_panel():
-    """Panel showing ranked countries based on complex_metrics weights."""
-    return html.Div([
-        html.H2("Ranking Panel"),
-        html.Div(id="ranked-countries-output", style={"margin-top": "20px"}),
-    ], className="panel")
+    """Interactive ranking panel with customizable metrics, sort order, and top N selection."""
+    return html.Div(
+        className="panel",
+        style={
+            "justifyContent": "flex-start",
+            "alignItems": "stretch",
+            "gap": "10px",
+            "fontSize": "1.2rem",
+            "padding": "12px",
+        },
+        children=[
+            html.Div(id="ranking-title", style={"fontWeight": "800"}, children="Ranking (select a region)"),
 
+            dcc.Dropdown(
+                id="ranking-metric",
+                clearable=False,
+                value="Complex_Metrics",
+                options=[
+                    {"label": "Complex Metrics (Custom Weights)", "value": "Complex_Metrics"},
+                    {"label": "GDP per Capita (USD)", "value": "Real_GDP_per_Capita_USD"},
+                    {"label": "Literacy Rate (%)", "value": "Total_Literacy_Rate"},
+                    {"label": "Electricity Access (%)", "value": "electricity_access_percent"},
+                    {"label": "Unemployment (%)", "value": "Unemployment_Rate_percent"},
+                    {"label": "Public Debt (% of GDP)", "value": "Public_Debt_percent_of_GDP"},
+                ],
+            ),
 
-@callback(
-    Output("ranked-countries-output", "children"),
-    Input("weight-asf", "value"),
-    Input("weight-iec", "value"),
-    Input("weight-scc", "value"),
-    Input("weight-wsi", "value"),
-    Input("weight-ers", "value"),
-    prevent_initial_call=False,
-)
-def update_ranking_output(w_asf, w_iec, w_scc, w_wsi, w_ers):
-    """Display ranked countries based on complex_metrics weights."""
-    try:
-        # Compute all metrics (functions use global data internally)
-        asf = available_skilled_workforce()
-        iec = industrial_energy_capacity()
-        scc = supply_chain_connectivity_score()
-        wsi = wage_sustainability_index()
-        ers = economic_resilience_score()
-        
-        # Align all series by index
-        all_metrics = pd.concat([asf, iec, scc, wsi, ers], axis=1).dropna()
-        all_metrics.columns = ['ASF', 'IEC', 'SCC', 'WSI', 'ERS']
-        
-        # Normalize weights
-        total_weight = w_asf + w_iec + w_scc + w_wsi + w_ers
-        if total_weight == 0:
-            return html.Div("Set at least one weight > 0")
-        
-        w_asf /= total_weight
-        w_iec /= total_weight
-        w_scc /= total_weight
-        w_wsi /= total_weight
-        w_ers /= total_weight
-        
-        # Compute weighted average
-        combined = (
-            all_metrics['ASF'] * w_asf +
-            all_metrics['IEC'] * w_iec +
-            all_metrics['SCC'] * w_scc +
-            all_metrics['WSI'] * w_wsi +
-            all_metrics['ERS'] * w_ers
-        )
-        
-        top = combined.sort_values(ascending=False).head(10)
-        entries = [html.Div(f"{country}: {score:.2f}", style={"padding": "5px"}) for country, score in top.items()]
-        
-        return html.Div([html.H4("Top 10 Countries by Complex Metrics"), *entries])
-    except Exception as e:
-        return html.Div(f"Error: {e}")
+            dcc.RadioItems(
+                id="ranking-order",
+                value="desc",
+                options=[
+                    {"label": "High → Low", "value": "desc"},
+                    {"label": "Low → High", "value": "asc"},
+                ],
+                inline=True,
+            ),
+
+            dcc.Slider(
+                id="ranking-top-n",
+                min=5,
+                max=30,
+                step=1,
+                value=15,
+                marks={5: "5", 10: "10", 15: "15", 20: "20", 25: "25", 30: "30"},
+            ),
+
+            dcc.Graph(
+                id="ranking-bar",
+                config={"displayModeBar": False, "responsive": True},
+                style={"flex": "1 1 auto", "width": "100%"},
+            ),
+
+            html.Div(
+                "Click a bar to select a country.",
+                style={"fontSize": "0.95rem", "opacity": 0.9},
+            ),
+        ],
+    )
