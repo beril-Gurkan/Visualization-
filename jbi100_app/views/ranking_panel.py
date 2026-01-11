@@ -1,4 +1,4 @@
-from dash import html, dcc, callback, Input, Output, ctx, ALL
+from dash import html, dcc, callback, Input, Output, ctx
 import pandas as pd
 from jbi100_app.data import (
     available_skilled_workforce,
@@ -12,140 +12,102 @@ from jbi100_app.views.scatterplot import Scatterplot
 
 
 def ranking_panel():
-    """Panel showing ranked countries based on complex_metrics weights."""
-    return html.Div([
-        html.H2("Ranking Panel"),
-        html.Div(
-            id="ranked-countries-output",
-            style={
-                "margin-top": "20px",
-                "width": "500px",
-                "boxSizing": "border-box",
-                "overflow": "hidden"
-            }
-        ),
-        dcc.Store(id="selected-country-from-ranking", data=None),
-        html.Div(
-            id="scatterplot-container",
-            style={
-                "margin-top": "20px",
-                "width": "500px",
-                "boxSizing": "border-box",
-                "overflow": "hidden"
-            }
-        ),
-    ], className="panel")
+    """Interactive ranking panel with customizable metrics, sort order, top N selection, and scatterplot."""
+    return html.Div(
+        className="panel",
+        style={
+            "justifyContent": "flex-start",
+            "alignItems": "stretch",
+            "gap": "10px",
+            "fontSize": "1.2rem",
+            "padding": "12px",
+        },
+        children=[
+            html.Div(id="ranking-title", style={"fontWeight": "800"}, children="Ranking (select a region)"),
+
+            dcc.Dropdown(
+                id="ranking-metric",
+                clearable=False,
+                value="Complex_Metrics",
+                options=[
+                    {"label": "Complex Metrics (Custom Weights)", "value": "Complex_Metrics"},
+                    {"label": "GDP per Capita (USD)", "value": "Real_GDP_per_Capita_USD"},
+                    {"label": "Literacy Rate (%)", "value": "Total_Literacy_Rate"},
+                    {"label": "Electricity Access (%)", "value": "electricity_access_percent"},
+                    {"label": "Unemployment (%)", "value": "Unemployment_Rate_percent"},
+                    {"label": "Public Debt (% of GDP)", "value": "Public_Debt_percent_of_GDP"},
+                ],
+            ),
+
+            dcc.RadioItems(
+                id="ranking-order",
+                value="desc",
+                options=[
+                    {"label": "High → Low", "value": "desc"},
+                    {"label": "Low → High", "value": "asc"},
+                ],
+                inline=True,
+            ),
+
+            dcc.Slider(
+                id="ranking-top-n",
+                min=5,
+                max=30,
+                step=1,
+                value=15,
+                marks={5: "5", 10: "10", 15: "15", 20: "20", 25: "25", 30: "30"},
+            ),
+
+            dcc.Graph(
+                id="ranking-bar",
+                config={"displayModeBar": False, "responsive": True},
+                style={"width": "100%", "height": "400px"},
+            ),
+            
+            # Scatterplot container (text shows initially, replaced by scatterplot on click)
+            html.Div(
+                id="scatterplot-container",
+                style={
+                    "marginTop": "10px",
+                    "width": "600px",
+                    "boxSizing": "border-box"
+                }
+            ),
+        ],
+    )
 
 
-@callback(
-    Output("ranked-countries-output", "children"),
-    Input("weight-asf", "value"),
-    Input("weight-iec", "value"),
-    Input("weight-scc", "value"),
-    Input("weight-wsi", "value"),
-    Input("weight-ers", "value"),
-    prevent_initial_call=False,
-)
-def update_ranking_output(w_asf, w_iec, w_scc, w_wsi, w_ers):
-    """Display ranked countries based on complex_metrics weights."""
-    try:
-        # Compute all metrics (functions use global data internally)
-        asf = available_skilled_workforce()
-        iec = industrial_energy_capacity()
-        scc = supply_chain_connectivity_score()
-        wsi = wage_sustainability_index()
-        ers = economic_resilience_score()
-        
-        # Align all series by index
-        all_metrics = pd.concat([asf, iec, scc, wsi, ers], axis=1).dropna()
-        all_metrics.columns = ['ASF', 'IEC', 'SCC', 'WSI', 'ERS']
-        
-        # Normalize weights
-        total_weight = w_asf + w_iec + w_scc + w_wsi + w_ers
-        if total_weight == 0:
-            return html.Div("Set at least one weight > 0")
-        
-        w_asf /= total_weight
-        w_iec /= total_weight
-        w_scc /= total_weight
-        w_wsi /= total_weight
-        w_ers /= total_weight
-        
-        # Compute weighted average
-        combined = (
-            all_metrics['ASF'] * w_asf +
-            all_metrics['IEC'] * w_iec +
-            all_metrics['SCC'] * w_scc +
-            all_metrics['WSI'] * w_wsi +
-            all_metrics['ERS'] * w_ers
-        )
-        
-        top = combined.sort_values(ascending=False).head(10)
-        
-        # Create clickable country entries
-        entries = []
-        for country, score in top.items():
-            entries.append(
-                html.Button(
-                    f"{country}: {score:.2f}",
-                    id={"type": "country-rank-button", "index": country},
-                    style={
-                        "padding": "8px 12px",
-                        "margin": "4px",
-                        "width": "calc(500px - 8px)",
-                        "boxSizing": "border-box",
-                        "textAlign": "left",
-                        "backgroundColor": "#f0f0f0",
-                        "border": "1px solid #ddd",
-                        "borderRadius": "4px",
-                        "cursor": "pointer"
-                    },
-                    n_clicks=0
-                )
-            )
-        
-        return html.Div(
-            [
-                html.H4("Top 10 Countries by Complex Metrics"),
-                html.Div(
-                    entries,
-                    style={
-                        "width": "500px",
-                        "boxSizing": "border-box",
-                        "overflow": "hidden"
-                    }
-                )
-            ]
-        )
-    except Exception as e:
-        return html.Div(f"Error: {e}")
-
-
-@callback(
-    Output("selected-country-from-ranking", "data"),
-    Input({"type": "country-rank-button", "index": ALL}, "n_clicks"),
-    prevent_initial_call=True,
-)
-def capture_country_click(n_clicks):
-    """Capture which country button was clicked."""
-    if not ctx.triggered_id:
-        return None
-    return ctx.triggered_id["index"]
-
-
+# Scatterplot callback - shows scatterplot when country is clicked from ranking
 @callback(
     Output("scatterplot-container", "children"),
-    Input("selected-country-from-ranking", "data"),
+    Input("ranking-bar", "clickData"),
     Input("metrics-econ", "value"),
     Input("metrics-demo", "value"),
     Input("metrics-sustain", "value"),
     Input("metrics-advanced", "value"),
     prevent_initial_call=False,
 )
-def show_scatterplot_for_country(selected_country, econ_metrics, demo_metrics, sustain_metrics, advanced_metrics):
-    """Display scatterplot when a country is selected from ranking."""
-    if selected_country is None:
-        return html.Div("Click on a country to see the scatterplot", style={"padding": "10px", "color": "#666"})
+def show_scatterplot_for_country(click_data, econ_metrics, demo_metrics, sustain_metrics, advanced_metrics):
+    """Display scatterplot when a country is clicked from the ranking bar chart."""
+    if not click_data or not click_data.get("points"):
+        return html.Div(
+            "Click a bar to select a country.",
+            style={"padding": "10px", "color": "#666", "fontSize": "0.95rem", "textAlign": "center"}
+        )
+    
+    # Extract country name from click data
+    # The bar chart stores the actual Country name (all caps) in customdata[0]
+    point = click_data["points"][0]
+    customdata = point.get("customdata")
+    if customdata and len(customdata) > 0:
+        selected_country = customdata[0]
+    else:
+        # Fallback to label/y/x if customdata not available
+        selected_country = point.get("label") or point.get("y") or point.get("x")
+    
+    # Ensure country name is a string and strip any whitespace
+    if selected_country:
+        selected_country = str(selected_country).strip().upper()
     
     try:
         # Get the full dataset
@@ -162,6 +124,9 @@ def show_scatterplot_for_country(selected_country, econ_metrics, demo_metrics, s
         if advanced_metrics:
             selected_metrics.extend(advanced_metrics if isinstance(advanced_metrics, list) else [advanced_metrics])
         
+        # Filter to available columns
+        selected_metrics = [m for m in selected_metrics if m in df.columns]
+        
         # Need at least 2 metrics for scatterplot
         if len(selected_metrics) < 2:
             # Fallback to available metrics
@@ -176,32 +141,27 @@ def show_scatterplot_for_country(selected_country, econ_metrics, demo_metrics, s
         y_metric = selected_metrics[1]
         
         # Create the scatterplot instance
-        plot = Scatterplot(f"Metrics for {selected_country}", x_metric, y_metric, df)
+        plot = Scatterplot(f"Country Comparison", x_metric, y_metric, df)
         
-        # Highlight the selected country
+        # Highlight the selected country by building the figure with selected_data
         selected_data = {"points": [{"customdata": selected_country}]}
-        fig = plot.update(x_metric, y_metric, selected_data)
+        fig = plot._build_figure({selected_country})  # Pass the country as a set for highlighting
+        
+        # Update the graph's figure
         plot.children[1].figure = fig
         
-        # Wrap in container with fixed width matching the buttons
+        # Wrap in container
         return html.Div(
             [
-                html.H4(f"Country Comparison - {selected_country}"),
-                html.Div(
-                    [plot],
-                    style={
-                        "width": "100%",
-                        "boxSizing": "border-box",
-                        "overflow": "hidden"
-                    }
-                )
+                html.H4(f"{selected_country} - highlighted in scatterplot", style={"fontSize": "1rem", "marginBottom": "8px", "marginTop": "0"}),
+                plot
             ],
             style={
                 "width": "100%",
-                "boxSizing": "border-box",
-                "overflow": "hidden"
+                "maxWidth": "100%",
+                "boxSizing": "border-box"
             }
         )
         
     except Exception as e:
-        return html.Div(f"Error creating scatterplot: {e}")
+        return html.Div(f"Error creating scatterplot: {e}", style={"color": "red", "fontSize": "0.95rem"})
