@@ -136,9 +136,13 @@ def capture_country_click(n_clicks):
 @callback(
     Output("scatterplot-container", "children"),
     Input("selected-country-from-ranking", "data"),
+    Input("metrics-econ", "value"),
+    Input("metrics-demo", "value"),
+    Input("metrics-sustain", "value"),
+    Input("metrics-advanced", "value"),
     prevent_initial_call=False,
 )
-def show_scatterplot_for_country(selected_country):
+def show_scatterplot_for_country(selected_country, econ_metrics, demo_metrics, sustain_metrics, advanced_metrics):
     """Display scatterplot when a country is selected from ranking."""
     if selected_country is None:
         return html.Div("Click on a country to see the scatterplot", style={"padding": "10px", "color": "#666"})
@@ -147,26 +151,29 @@ def show_scatterplot_for_country(selected_country):
         # Get the full dataset
         df = get_data()
         
-        # Define available metrics for the scatterplot
-        # Use economic and demographic metrics that are likely available
-        metric_cols = [
-            'Real_GDP_per_Capita_USD',
-            'Unemployment_Rate_percent',
-            'Total_Population',
-            'Total_Literacy_Rate',
-            'electricity_access_percent',
-            'electricity_production_kWh',
-        ]
+        # Combine all selected metrics from different groups
+        selected_metrics = []
+        if econ_metrics:
+            selected_metrics.extend(econ_metrics if isinstance(econ_metrics, list) else [econ_metrics])
+        if demo_metrics:
+            selected_metrics.extend(demo_metrics if isinstance(demo_metrics, list) else [demo_metrics])
+        if sustain_metrics:
+            selected_metrics.extend(sustain_metrics if isinstance(sustain_metrics, list) else [sustain_metrics])
+        if advanced_metrics:
+            selected_metrics.extend(advanced_metrics if isinstance(advanced_metrics, list) else [advanced_metrics])
         
-        # Filter to only columns that exist in the dataframe
-        available_metrics = [col for col in metric_cols if col in df.columns]
+        # Need at least 2 metrics for scatterplot
+        if len(selected_metrics) < 2:
+            # Fallback to available metrics
+            available = [col for col in df.columns if col != 'Country']
+            if len(available) >= 2:
+                selected_metrics = available[:2]
+            else:
+                return html.Div("Not enough metrics available for scatterplot")
         
-        if len(available_metrics) < 2:
-            return html.Div("Not enough metrics available for scatterplot")
-        
-        # Default to first two available metrics
-        x_metric = available_metrics[0]
-        y_metric = available_metrics[1]
+        # Use first two selected metrics as x and y axes
+        x_metric = selected_metrics[0]
+        y_metric = selected_metrics[1]
         
         # Create the scatterplot instance
         plot = Scatterplot(f"Metrics for {selected_country}", x_metric, y_metric, df)
@@ -183,14 +190,14 @@ def show_scatterplot_for_country(selected_country):
                 html.Div(
                     [plot],
                     style={
-                        "width": "500px",
+                        "width": "100%",
                         "boxSizing": "border-box",
                         "overflow": "hidden"
                     }
                 )
             ],
             style={
-                "width": "500px",
+                "width": "100%",
                 "boxSizing": "border-box",
                 "overflow": "hidden"
             }
