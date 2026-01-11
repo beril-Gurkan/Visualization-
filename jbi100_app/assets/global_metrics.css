@@ -1,0 +1,76 @@
+.metrics-section {
+    width: 100%;
+    border-top: 1px solid var(--accent);
+    padding: 0 10px;
+}
+
+.metrics-section h4 {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    color: var(--primary);
+    font-family: "Geist", sans-serif;
+    font-weight: 600;
+    font-size: 1.25rem;
+}
+
+.metrics-label {
+    font-family: "Geist", sans-serif;
+    font-weight: 400;
+    color: var(--secondary);
+    font-size: 0.75rem;
+}
+
+.metrics-slider-wrapper {
+    margin-top: 8px;
+    margin-bottom: 16px;
+}
+
+.metrics-buttons {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+/* Checklist styling */
+.metrics-checklist label {
+    color: var(--primary);
+    font-family: "Geist", sans-serif;
+    font-weight: 400;
+    font-size: 1rem;
+}
+
+.metrics-checklist input[type="checkbox"] {
+    accent-color: var(--main);
+    width: 16px;
+    height: 16px;
+}
+
+.btn-apply-filters,
+.btn-reset-filters {
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    font-family: "Geist", sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.2s;
+}
+
+.btn-apply-filters {
+    background-color: var(--main);
+    color: white;
+}
+
+.btn-apply-filters:hover {
+    background-color: #5caed7aa;
+}
+
+.btn-reset-filters {
+    background-color: #FFFFFF;
+    color: var(--background);
+}
+
+.btn-reset-filters:hover {
+    background-color: #FFFFFFaa;
+}

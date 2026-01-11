@@ -8,66 +8,150 @@ def global_metrics():
         
         # Economic section
         html.Div([
-            html.H4("Economic", style={"margin-top": "15px", "margin-bottom": "10px"}),
+            html.H4("Economic"),
             html.Div([
-                dcc.Checklist(id="check-unemployment", options=[{"label": " Unemployment rate", "value": "unemployment"}], value=[]),
+                dcc.Checklist(
+                    id="check-unemployment",
+                    options=[{"label": " Unemployment rate", "value": "unemployment"}],
+                    value=[],
+                    className="metrics-checklist",
+                ),
                 html.Div([
-                    html.Label("Importance", style={"display": "inline-block", "width": "70px"}),
-                    dcc.Slider(id="slider-unemployment", min=0, max=100, step=1, value=60, marks={0: "0", 100: "100"}, tooltip={"placement": "bottom", "always_visible": True}),
-                ], style={"margin-top": "8px", "margin-bottom": "15px"}),
-            ]),
+                    html.Label("Importance", className="metrics-label"),
+                    dcc.Slider(
+                        id="slider-unemployment",
+                        min=0,
+                        max=100,
+                        step=1,
+                        value=60,
+                        marks={0: "0", 100: "100"},
+                        tooltip={"placement": "bottom", "always_visible": True},
+                        className="metrics-slider",
+                    ),
+                ], className="metrics-slider-wrapper"),
+            ], className="metrics-subsection"),
             html.Div([
-                dcc.Checklist(id="check-gdp", options=[{"label": " GDP per capita", "value": "gdp"}], value=[]),
+                dcc.Checklist(
+                    id="check-gdp",
+                    options=[{"label": " GDP per capita", "value": "gdp"}],
+                    value=[],
+                    className="metrics-checklist",
+                ),
                 html.Div([
-                    html.Label("Importance", style={"display": "inline-block", "width": "70px"}),
-                    dcc.Slider(id="slider-gdp", min=0, max=100, step=1, value=70, marks={0: "0", 100: "100"}, tooltip={"placement": "bottom", "always_visible": True}),
-                ], style={"margin-top": "8px", "margin-bottom": "15px"}),
-            ]),
-        ]),
+                    html.Label("Importance", className="metrics-label"),
+                    dcc.Slider(
+                        id="slider-gdp",
+                        min=0,
+                        max=100,
+                        step=1,
+                        value=70,
+                        marks={0: "0", 100: "100"},
+                        tooltip={"placement": "bottom", "always_visible": True},
+                        className="metrics-slider",
+                    ),
+                ], className="metrics-slider-wrapper"),
+            ], className="metrics-subsection"),
+        ], className="metrics-section"),
         
         # Demographic section
         html.Div([
-            html.H4("Demographic", style={"margin-top": "15px", "margin-bottom": "10px"}),
+            html.H4("Demographic"),
             html.Div([
-                dcc.Checklist(id="check-youth-unemp", options=[{"label": " Youth unemployment rate", "value": "youth_unemployment"}], value=[]),
+                dcc.Checklist(
+                    id="check-youth-unemp",
+                    options=[{"label": " Youth unemployment rate", "value": "youth_unemployment"}],
+                    value=[],
+                    className="metrics-checklist",
+                ),
                 html.Div([
-                    html.Label("Importance", style={"display": "inline-block", "width": "70px"}),
-                    dcc.Slider(id="slider-youth-unemp", min=0, max=100, step=1, value=50, marks={0: "0", 100: "100"}, tooltip={"placement": "bottom", "always_visible": True}),
-                ], style={"margin-top": "8px", "margin-bottom": "15px"}),
-            ]),
+                    html.Label("Importance", className="metrics-label"),
+                    dcc.Slider(
+                        id="slider-youth-unemp",
+                        min=0,
+                        max=100,
+                        step=1,
+                        value=50,
+                        marks={0: "0", 100: "100"},
+                        tooltip={"placement": "bottom", "always_visible": True},
+                        className="metrics-slider",
+                    ),
+                ], className="metrics-slider-wrapper"),
+            ], className="metrics-subsection"),
             html.Div([
-                dcc.Checklist(id="check-pop-growth", options=[{"label": " Population growth rate", "value": "pop_growth"}], value=[]),
+                dcc.Checklist(
+                    id="check-pop-growth",
+                    options=[{"label": " Population growth rate", "value": "pop_growth"}],
+                    value=[],
+                    className="metrics-checklist",
+                ),
                 html.Div([
-                    html.Label("Importance", style={"display": "inline-block", "width": "70px"}),
-                    dcc.Slider(id="slider-pop-growth", min=0, max=100, step=1, value=40, marks={0: "0", 100: "100"}, tooltip={"placement": "bottom", "always_visible": True}),
-                ], style={"margin-top": "8px", "margin-bottom": "15px"}),
-            ]),
-        ]),
+                    html.Label("Importance", className="metrics-label"),
+                    dcc.Slider(
+                        id="slider-pop-growth",
+                        min=0,
+                        max=100,
+                        step=1,
+                        value=40,
+                        marks={0: "0", 100: "100"},
+                        tooltip={"placement": "bottom", "always_visible": True},
+                        className="metrics-slider",
+                    ),
+                ], className="metrics-slider-wrapper"),
+            ], className="metrics-subsection"),
+        ], className="metrics-section"),
         
         # Sustainability section
         html.Div([
-            html.H4("Sustainability", style={"margin-top": "15px", "margin-bottom": "10px"}),
+            html.H4("Sustainability"),
             html.Div([
-                dcc.Checklist(id="check-elec-access", options=[{"label": " Electricity access %", "value": "elec_access"}], value=[]),
+                dcc.Checklist(
+                    id="check-elec-access",
+                    options=[{"label": " Electricity access %", "value": "elec_access"}],
+                    value=[],
+                    className="metrics-checklist",
+                ),
                 html.Div([
-                    html.Label("Importance", style={"display": "inline-block", "width": "70px"}),
-                    dcc.Slider(id="slider-elec-access", min=0, max=100, step=1, value=65, marks={0: "0", 100: "100"}, tooltip={"placement": "bottom", "always_visible": True}),
-                ], style={"margin-top": "8px", "margin-bottom": "15px"}),
-            ]),
+                    html.Label("Importance", className="metrics-label"),
+                    dcc.Slider(
+                        id="slider-elec-access",
+                        min=0,
+                        max=100,
+                        step=1,
+                        value=65,
+                        marks={0: "0", 100: "100"},
+                        tooltip={"placement": "bottom", "always_visible": True},
+                        className="metrics-slider",
+                    ),
+                ], className="metrics-slider-wrapper"),
+            ], className="metrics-subsection"),
             html.Div([
-                dcc.Checklist(id="check-elec-capacity", options=[{"label": " Electricity generating capacity", "value": "elec_capacity"}], value=[]),
+                dcc.Checklist(
+                    id="check-elec-capacity",
+                    options=[{"label": " Electricity generating capacity", "value": "elec_capacity"}],
+                    value=[],
+                    className="metrics-checklist",
+                ),
                 html.Div([
-                    html.Label("Importance", style={"display": "inline-block", "width": "70px"}),
-                    dcc.Slider(id="slider-elec-capacity", min=0, max=100, step=1, value=55, marks={0: "0", 100: "100"}, tooltip={"placement": "bottom", "always_visible": True}),
-                ], style={"margin-top": "8px", "margin-bottom": "15px"}),
-            ]),
-        ]),
+                    html.Label("Importance", className="metrics-label"),
+                    dcc.Slider(
+                        id="slider-elec-capacity",
+                        min=0,
+                        max=100,
+                        step=1,
+                        value=55,
+                        marks={0: "0", 100: "100"},
+                        tooltip={"placement": "bottom", "always_visible": True},
+                        className="metrics-slider",
+                    ),
+                ], className="metrics-slider-wrapper"),
+            ], className="metrics-subsection"),
+        ], className="metrics-section"),
         
         # Buttons
         html.Div([
-            html.Button("Apply filters", id="btn-apply-filters", n_clicks=0, style={"background-color": "#0056cc", "color": "white", "padding": "10px 20px", "border": "none", "border-radius": "5px", "margin-right": "10px", "cursor": "pointer"}),
-            html.Button("Reset", id="btn-reset-filters", n_clicks=0, style={"background-color": "#f0f0f0", "color": "#333", "padding": "10px 20px", "border": "1px solid #ccc", "border-radius": "5px", "cursor": "pointer"}),
-        ], style={"margin-top": "20px"}),
+            html.Button("Apply filters", id="btn-apply-filters", n_clicks=0, className="btn-apply-filters"),
+            html.Button("Reset", id="btn-reset-filters", n_clicks=0, className="btn-reset-filters"),
+        ], className="metrics-buttons"),
     ], className="panel")
 
 
