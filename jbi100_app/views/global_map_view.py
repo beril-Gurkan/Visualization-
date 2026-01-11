@@ -34,7 +34,7 @@ def global_map_view():
                 z=[1] * len(sub),  # dummy values (we color via a single-color colorscale)
                 colorscale=[[0, REGION_COLORS[region]], [1, REGION_COLORS[region]]],
                 showscale=False,
-                showlegend=True,
+                showlegend=False,
                 marker_line_color="#444",
                 marker_line_width=0.6,
                 marker_opacity=1.0,
@@ -44,10 +44,10 @@ def global_map_view():
         )
 
     fig.update_geos(
-        projection_type="natural earth",  # keep the “3D-ish” look
-        showocean=True,
+        projection_type="equirectangular",  # "natural earth" - keep the “3D-ish” look
+        showocean=False,
         oceancolor="#b9d9ff",
-        showlakes=True,
+        showlakes=False,
         lakecolor="#b9d9ff",
         showland=True,
         landcolor="#eef2f7",
@@ -58,15 +58,11 @@ def global_map_view():
     )
 
     fig.update_layout(
-        margin=dict(l=0, r=0, t=45, b=0),
-        legend=dict(
-            orientation="h",
-            yanchor="bottom",
-            y=1.02,
-            xanchor="center",
-            x=0.5,
-            title_text="Region",
-        ),
+        margin=dict(l=0, r=0, t=0, b=0),
+        paper_bgcolor='rgba(0,0,0,0)',  # transparent background
+        plot_bgcolor='rgba(0,0,0,0)',   # transparent plot area
+        geo_bgcolor='rgba(0,0,0,0)',    # transparent geo background
+        showlegend=False,
         uirevision="global-map-stable",  # preserve view
         hoverlabel=dict(font_size=18, bgcolor="white"),
         dragmode = False,
@@ -74,15 +70,8 @@ def global_map_view():
 
     return html.Div(
         className="panel",
-        style={
-            "justifyContent": "flex-start",
-            "alignItems": "stretch",
-            "gap": "8px",
-            "fontSize": "1.2rem",
-            "padding": "12px",
-        },
         children=[
-            html.Div("Click a country to drill down to its region", style={"fontWeight": "700"}),
+            # html.Div("Click a country to drill down to its region", style={"fontWeight": "700"}),
             dcc.Graph(
                 id="global-map",
                 figure=fig,

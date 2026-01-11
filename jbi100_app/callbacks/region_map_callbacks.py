@@ -93,13 +93,16 @@ def update_region_map(selected_region, selected_country):
 
         # Hide all basemap layers so only your choropleth polygons are visible
         visible=False,          # hides land/ocean/coastlines/graticules
-        bgcolor="white",
+        bgcolor="rgba(0,0,0,0)",  # transparent background
     )
 
 
     fig.update_layout(
         dragmode = False,
         margin=dict(l=0, r=0, t=0, b=0),
+        paper_bgcolor='rgba(0,0,0,0)',  # transparent background
+        plot_bgcolor='rgba(0,0,0,0)',   # transparent plot area
+        geo_bgcolor='rgba(0,0,0,0)',    # transparent geo background
         uirevision=f"region-map-{selected_region}",
     )
 
