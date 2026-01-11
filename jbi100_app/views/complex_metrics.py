@@ -78,7 +78,7 @@ def complex_metrics():
             )
     
     return html.Div([
-        html.H3("Complex Metrics"),
+        html.H3("Complex Metrics", className="panel-title"),
         html.Div([
             html.Label("Available Skilled Workforce"),
             dcc.Slider(id="weight-asf", min=0, max=1, step=0.01, value=0.2, marks={0: "0", 1: "1"}),

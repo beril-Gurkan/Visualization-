@@ -19,7 +19,7 @@ app.layout = html.Div(
         html.Div(
             id="layout-container",
             children=[
-                html.H1("Global Overview", id="title"),
+                html.H1("Business Expander - Global Overview", id="title"),
                 overview_layout(),
                 detailed_layout(),
             ],

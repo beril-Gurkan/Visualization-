@@ -4,7 +4,7 @@ from dash import html, dcc, callback, Input, Output
 def global_metrics():
     """Filter panel for Economic, Demographic, and Sustainability metrics."""
     return html.Div([
-        html.H3("Global Metrics"),
+        html.H3("Global Metrics", className="panel-title"),
         
         # Economic section
         html.Div([

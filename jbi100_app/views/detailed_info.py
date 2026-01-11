@@ -205,7 +205,7 @@ def detailed_info(country_name: str | None):
         children=[
             html.Div(
                 [
-                    html.H4(country_name, className="detail-title"),
+                    html.H4(country_name, className="panel-title"),
                     html.Div("Quick summary for decision support", className="detail-subtitle"),
                 ],
                 className="detail-header",

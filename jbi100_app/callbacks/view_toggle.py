@@ -11,8 +11,8 @@ from jbi100_app.main import app
 )
 def toggle_layout_visibility(view_state):
     if view_state:
-        return {"display": "none"}, {"display": "grid"}, "Regional Overview"
-    return {"display": "grid"}, {"display": "none"}, "Global Overview"
+        return {"display": "none"}, {"display": "grid"}, "Business Expander - Regional Overview"
+    return {"display": "grid"}, {"display": "none"}, "Business Expander - Global Overview"
 
 
 @app.callback(

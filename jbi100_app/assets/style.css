@@ -1,29 +1,43 @@
-body {
-    background-color: #f9f9f9;
-    color: #333333;
-    font-family: "Helvetica Neue", Arial, sans-serif;
-    font-size: 15px;
-    margin: 0px;
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Geist:wght@100..900&display=swap");
+
+:root {
+    --background: #222222;
+    --panel-background: #353535;
+    --primary: #ffffff;
+    --secondary: #ababab;
 }
 
-/* Custom styling */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--background);
+}
+
 #layout-container {
     display: flex;
     flex-direction: column;
     width: 100vw;
     height: 100vh;
+    padding: 16px
 }
 
 #title {
-    text-align: center;
-    margin: 10px 10px 0;
+    font-family: "Bebas Neue", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    color: var(--secondary);
+    font-size: 3rem;
+    text-align: left;
 }
 
 .layout {
     display: grid;
     flex: 1;
-    gap: 15px;
-    padding: 15px;
+    gap: 16px;
 }
 
 #overview-layout {
@@ -61,17 +75,24 @@ body {
 .panel {
     display: flex;
     flex-direction: column;
-    align-items: stretch;
+    align-items: center;
     justify-content: flex-start;
     width: 100%;
     height: 100%;
-    background-color: #ffffff;
-    border: 3px solid #4f4b4b;
+    background-color: var(--panel-background);
+    border: 1px solid var(--secondary);
     border-radius: 15px;
     padding: 12px;
     gap: 10px;
-    font-size: 1.4rem;
-    color: #0c0b0b;
+}
+
+.panel-title {
+    font-family: "Bebas Neue", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    color: var(--primary);
+    font-size: 1.5rem;
+
 }
 
 /* Detailed info panel styling */
