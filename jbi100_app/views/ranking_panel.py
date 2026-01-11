@@ -15,9 +15,25 @@ def ranking_panel():
     """Panel showing ranked countries based on complex_metrics weights."""
     return html.Div([
         html.H2("Ranking Panel"),
-        html.Div(id="ranked-countries-output", style={"margin-top": "20px"}),
+        html.Div(
+            id="ranked-countries-output",
+            style={
+                "margin-top": "20px",
+                "width": "500px",
+                "boxSizing": "border-box",
+                "overflow": "hidden"
+            }
+        ),
         dcc.Store(id="selected-country-from-ranking", data=None),
-        html.Div(id="scatterplot-container", style={"margin-top": "20px"}),
+        html.Div(
+            id="scatterplot-container",
+            style={
+                "margin-top": "20px",
+                "width": "500px",
+                "boxSizing": "border-box",
+                "overflow": "hidden"
+            }
+        ),
     ], className="panel")
 
 
@@ -76,19 +92,31 @@ def update_ranking_output(w_asf, w_iec, w_scc, w_wsi, w_ers):
                     style={
                         "padding": "8px 12px",
                         "margin": "4px",
-                        "width": "100%",
+                        "width": "calc(500px - 8px)",
+                        "boxSizing": "border-box",
                         "textAlign": "left",
                         "backgroundColor": "#f0f0f0",
                         "border": "1px solid #ddd",
                         "borderRadius": "4px",
-                        "cursor": "pointer",
-                        ":hover": {"backgroundColor": "#e0e0e0"}
+                        "cursor": "pointer"
                     },
                     n_clicks=0
                 )
             )
         
-        return html.Div([html.H4("Top 10 Countries by Complex Metrics"), *entries])
+        return html.Div(
+            [
+                html.H4("Top 10 Countries by Complex Metrics"),
+                html.Div(
+                    entries,
+                    style={
+                        "width": "500px",
+                        "boxSizing": "border-box",
+                        "overflow": "hidden"
+                    }
+                )
+            ]
+        )
     except Exception as e:
         return html.Div(f"Error: {e}")
 
@@ -148,10 +176,25 @@ def show_scatterplot_for_country(selected_country):
         fig = plot.update(x_metric, y_metric, selected_data)
         plot.children[1].figure = fig
         
-        return html.Div([
-            html.H4(f"Country Comparison"),
-            plot
-        ])
+        # Wrap in container with fixed width matching the buttons
+        return html.Div(
+            [
+                html.H4(f"Country Comparison - {selected_country}"),
+                html.Div(
+                    [plot],
+                    style={
+                        "width": "500px",
+                        "boxSizing": "border-box",
+                        "overflow": "hidden"
+                    }
+                )
+            ],
+            style={
+                "width": "500px",
+                "boxSizing": "border-box",
+                "overflow": "hidden"
+            }
+        )
         
     except Exception as e:
         return html.Div(f"Error creating scatterplot: {e}")
