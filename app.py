@@ -8,13 +8,19 @@ from dash import html, dcc
 import jbi100_app.callbacks.view_toggle
 import jbi100_app.callbacks.ranking_callbacks
 import jbi100_app.callbacks.detail_callbacks
-import jbi100_app.callbacks.region_map_callbacks   # for the regional map
+import jbi100_app.callbacks.region_map_callbacks
+import jbi100_app.callbacks.resize_callbacks
+
+# ✅ new: multi-view (scatterplot) callback module
+import jbi100_app.callbacks.multiview_callbacks
 
 
 app.layout = html.Div(
     [
         dcc.Store(id="selected_region", data=None),
         dcc.Store(id="selected_country", data=None),
+
+        html.Div(id="resize-sentinel", style={"display": "none"}),
 
         html.Div(
             id="layout-container",

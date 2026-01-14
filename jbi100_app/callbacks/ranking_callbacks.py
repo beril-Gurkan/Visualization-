@@ -1,32 +1,14 @@
-import numpy as np
 import pandas as pd
-import plotly.graph_objects as go
-
 from dash import ctx
 from dash.dependencies import Input, Output, State
+
 from jbi100_app.main import app
 from jbi100_app.data import get_data
 from jbi100_app.utils.country_meta import attach_country_meta
 
 
-def _winsorize(s: pd.Series, lower=0.05, upper=0.95) -> pd.Series:
-    s = pd.to_numeric(s, errors="coerce")
-    lo = s.quantile(lower)
-    hi = s.quantile(upper)
-    return s.clip(lo, hi)
-
-
-def _zscore(s: pd.Series) -> pd.Series:
-    s = s.astype(float)
-    mu = s.mean()
-    sd = s.std(ddof=0)
-    if sd == 0 or np.isnan(sd):
-        return s * 0.0
-    return (s - mu) / sd
-
-
 def _compute_complex_metrics_scores(w_asf, w_iec, w_scc, w_wsi, w_ers):
-    """Compute weighted complex metrics scores for all countries."""
+    """Compute weighted complex metrics scores for all countries (0–100)."""
     from jbi100_app.data import (
         available_skilled_workforce,
         industrial_energy_capacity,
@@ -34,45 +16,50 @@ def _compute_complex_metrics_scores(w_asf, w_iec, w_scc, w_wsi, w_ers):
         wage_sustainability_index,
         economic_resilience_score,
     )
-    
-    # Normalize weights
-    total = w_asf + w_iec + w_scc + w_wsi + w_ers
+
+    total = (w_asf or 0) + (w_iec or 0) + (w_scc or 0) + (w_wsi or 0) + (w_ers or 0)
     if total == 0:
         w_asf = w_iec = w_scc = w_wsi = w_ers = 0.2
     else:
-        w_asf, w_iec, w_scc, w_wsi, w_ers = w_asf/total, w_iec/total, w_scc/total, w_wsi/total, w_ers/total
-    
-    # Compute each metric
-    metrics = {
-        'ASF': available_skilled_workforce(),
-        'IEC': industrial_energy_capacity(),
-        'SCC': supply_chain_connectivity_score(),
-        'WSI': wage_sustainability_index(),
-        'ERS': economic_resilience_score(),
-    }
-    
-    # Combine into weighted score
-    scores = pd.Series(dtype=float)
-    for country in set().union(*[s.index for s in metrics.values()]):
-        score = (
-            metrics['ASF'].get(country, 0) * w_asf +
-            metrics['IEC'].get(country, 0) * w_iec +
-            metrics['SCC'].get(country, 0) * w_scc +
-            metrics['WSI'].get(country, 0) * w_wsi +
-            metrics['ERS'].get(country, 0) * w_ers
+        w_asf, w_iec, w_scc, w_wsi, w_ers = (
+            w_asf / total,
+            w_iec / total,
+            w_scc / total,
+            w_wsi / total,
+            w_ers / total,
         )
-        scores[country] = score
-    
-    # Scale to 0-100
+
+    metrics = {
+        "ASF": available_skilled_workforce(),
+        "IEC": industrial_energy_capacity(),
+        "SCC": supply_chain_connectivity_score(),
+        "WSI": wage_sustainability_index(),
+        "ERS": economic_resilience_score(),
+    }
+
+    all_countries = set().union(*[s.index for s in metrics.values()])
+    scores = pd.Series(index=sorted(all_countries), dtype=float)
+
+    for c in scores.index:
+        scores.loc[c] = (
+            metrics["ASF"].get(c, 0) * w_asf
+            + metrics["IEC"].get(c, 0) * w_iec
+            + metrics["SCC"].get(c, 0) * w_scc
+            + metrics["WSI"].get(c, 0) * w_wsi
+            + metrics["ERS"].get(c, 0) * w_ers
+        )
+
     if len(scores) > 0 and scores.max() > scores.min():
-        scores = (scores - scores.min()) / (scores.max() - scores.min()) * 100
-    
+        scores = (scores - scores.min()) / (scores.max() - scores.min()) * 100.0
     return scores
 
 
 @app.callback(
     Output("ranking-title", "children"),
-    Output("ranking-bar", "figure"),
+    Output("ranking-table", "data"),
+    Output("ranking-table", "columns"),
+    Output("ranking-table", "style_data_conditional"),
+    Output("ranking-hint", "children"),
     Input("selected_region", "data"),
     Input("ranking-metric", "value"),
     Input("ranking-order", "value"),
@@ -84,106 +71,104 @@ def _compute_complex_metrics_scores(w_asf, w_iec, w_scc, w_wsi, w_ers):
     Input("weight-wsi", "value"),
     Input("weight-ers", "value"),
 )
-def update_ranking(selected_region, metric, order, top_n, selected_country, w_asf, w_iec, w_scc, w_wsi, w_ers):
-    """Update ranking bar chart based on selected metric and weights."""
-    
-    # Empty state
+def update_ranking_table(selected_region, metric, order, top_n, selected_country, w_asf, w_iec, w_scc, w_wsi, w_ers):
+    title = "Rankings"
+    zebra = [{"if": {"row_index": "odd"}, "backgroundColor": "rgba(0,0,0,0.02)"}]
+
     if not selected_region:
-        fig = go.Figure()
-        fig.update_layout(
-            margin=dict(l=10, r=10, t=10, b=10),
-            xaxis=dict(visible=False),
-            yaxis=dict(visible=False),
-            annotations=[dict(text="Select a region on the global map", showarrow=False, x=0.5, y=0.5)],
-        )
-        return "Ranking (select a region)", fig
+        return title, [], [], zebra, "Select a region on the global map to populate rankings."
 
-    # Get data for selected region
-    df = attach_country_meta(get_data())
+    selected_region = str(selected_region).strip()
+
+    try:
+        df = attach_country_meta(get_data())
+    except Exception as e:
+        return title, [], [], zebra, f"Error loading data: {e}"
+
     df = df[df["region"] == selected_region].copy()
-
     if df.empty:
-        fig = go.Figure()
-        fig.update_layout(
-            margin=dict(l=10, r=10, t=10, b=10),
-            xaxis=dict(visible=False),
-            yaxis=dict(visible=False),
-            annotations=[dict(text=f"No countries in {selected_region}", showarrow=False, x=0.5, y=0.5)],
-        )
-        return f"Ranking — {selected_region}", fig
+        return title, [], [], zebra, f"No countries found for region '{selected_region}'."
 
-    # Compute values based on selected metric
     if metric == "Complex_Metrics":
-        # Compute complex metrics with current slider weights
         scores = _compute_complex_metrics_scores(w_asf, w_iec, w_scc, w_wsi, w_ers)
         df["value"] = df["Country"].map(scores)
-        x_title = "Complex Metrics (0–100)"
-        
+        value_label = "Complex Metrics (0–100)"
     else:
-        # Standard metric from dataframe
-        df["value"] = pd.to_numeric(df.get(metric, pd.Series(dtype=float)), errors="coerce")
-        x_title = metric.replace("_", " ")
+        if metric not in df.columns:
+            return title, [], [], zebra, f"Metric '{metric}' not found in data."
+        df["value"] = pd.to_numeric(df[metric], errors="coerce")
+        value_label = metric.replace("_", " ")
 
-    # Filter out NaN values
     df = df.dropna(subset=["value"]).copy()
-    
     if df.empty:
-        fig = go.Figure()
-        fig.update_layout(
-            margin=dict(l=10, r=10, t=10, b=10),
-            xaxis=dict(visible=False),
-            yaxis=dict(visible=False),
-            annotations=[dict(text="No data for this metric", showarrow=False, x=0.5, y=0.5)],
-        )
-        return f"Ranking — {selected_region}", fig
+        return title, [], [], zebra, f"No non-missing values for '{value_label}' in '{selected_region}'."
 
-    # Sort and limit to top N
     ascending = (order == "asc")
-    df = df.sort_values("value", ascending=ascending).head(int(top_n))
-    
-    # Reverse the order for display (so highest is at top of chart)
-    df = df.iloc[::-1]
+    df = df.sort_values("value", ascending=ascending)
 
-    # Highlight selected country
-    colors = ["#636EFA" if not selected_country or c != selected_country else "#EF553B" 
-              for c in df["Country"]]
+    if top_n != "all":
+        df = df.head(int(top_n))
 
-    # Create bar chart
-    fig = go.Figure(
-        go.Bar(
-            x=df["value"],
-            y=df["country_display"],
-            orientation="h",
-            customdata=df["Country"].values.reshape(-1, 1),
-            hovertemplate="%{y}: %{x:.2f}<extra></extra>",
-            marker=dict(color=colors),
+    df = df.reset_index(drop=True)
+    df["Rank"] = range(1, len(df) + 1)
+
+    rows = []
+    for i in range(len(df)):
+        rows.append(
+            {
+                "Rank": int(df.loc[i, "Rank"]),
+                "Country": df.loc[i, "country_display"],
+                "Value": df.loc[i, "value"],
+                "__country_raw__": df.loc[i, "Country"],
+            }
         )
-    )
-    
-    fig.update_layout(
-        margin=dict(l=10, r=10, t=10, b=10),
-        xaxis_title=x_title,
-        yaxis_title="",
-        height=520,
-        showlegend=False,
-    )
 
-    return f"Ranking — {selected_region}", fig
+    columns = [
+        {"name": "Rank", "id": "Rank"},
+        {"name": "Country", "id": "Country"},
+        {"name": value_label, "id": "Value"},
+    ]
+
+    # purely visual highlight (selection still comes from map / clear button)
+    style_cond = list(zebra)
+    if selected_country:
+        idxs = df.index[df["Country"] == selected_country].tolist()
+        if idxs:
+            style_cond.append(
+                {
+                    "if": {"row_index": int(idxs[0])},
+                    "backgroundColor": "rgba(239, 85, 59, 0.15)",
+                    "fontWeight": "700",
+                }
+            )
+
+    hint = f"Showing {len(rows)} countries in {selected_region} ranked by '{value_label}'. Selection is done via the map (not the table)."
+    return title, rows, columns, style_cond, hint
 
 
 @app.callback(
     Output("selected_country", "data"),
-    Input("ranking-bar", "clickData"),
+    Input("region-map", "clickData"),
+    Input("btn-clear-country", "n_clicks"),
     Input("selected_region", "data"),
     State("selected_country", "data"),
     prevent_initial_call=True,
 )
-def update_selected_country(ranking_click, selected_region, current_country):
+def update_selected_country(region_map_click, clear_clicks, selected_region, current_country):
+    # region change clears selection
     if ctx.triggered_id == "selected_region":
         return None
 
-    if ctx.triggered_id == "ranking-bar" and ranking_click and ranking_click.get("points"):
-        country = ranking_click["points"][0].get("customdata", [None])[0]
-        return country or current_country
+    # clear button
+    if ctx.triggered_id == "btn-clear-country":
+        return None
+
+    # map click toggles selection
+    if ctx.triggered_id == "region-map" and region_map_click and region_map_click.get("points"):
+        cd = region_map_click["points"][0].get("customdata", [None, None])
+        country = cd[0] if isinstance(cd, (list, tuple)) and len(cd) > 0 else None
+        if not country:
+            return current_country
+        return None if country == current_country else country
 
     return current_country

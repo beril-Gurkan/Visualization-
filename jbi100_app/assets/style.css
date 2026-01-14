@@ -39,25 +39,32 @@ body {
     grid-area: map;
 }
 
+/* ✅ Updated detailed layout to make space for a multiple-views workspace */
 #detailed-layout {
     grid-template-areas:
     "metrics map ranking"
-    "metrics info ranking";
+    "metrics multiview multiview"
+    "metrics info info";
     grid-template-columns: 1fr 2fr 1fr;
-    grid-template-rows: 2fr 1fr;
+    grid-template-rows: 1.1fr 1fr 0.9fr;
 }
+
 #complex-metrics-wrapper {
     grid-area: metrics;
 }
 #region-map-wrapper {
     grid-area: map;
 }
-#detailed-info-wrapper {
-    grid-area: info;
-}
 #ranking-wrapper {
     grid-area: ranking;
 }
+#multiview-wrapper {
+    grid-area: multiview;
+}
+#detailed-info-wrapper {
+    grid-area: info;
+}
+
 .panel {
     display: flex;
     flex-direction: column;

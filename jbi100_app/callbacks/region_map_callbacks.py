@@ -49,40 +49,64 @@ def update_region_map(selected_region, selected_country):
     if df.empty:
         return f"Region Map — {selected_region}", _blank(f"No mappable countries for: {selected_region}")
 
-    color = REGION_COLORS.get(selected_region, "#ccebc5")
+    region_color = REGION_COLORS.get(selected_region, "#ccebc5")
+    grey_color = "#d9d9d9"
 
     fig = go.Figure()
 
-    # region countries only
-    fig.add_trace(
-        go.Choropleth(
-            locations=df["iso3"],
-            z=[1] * len(df),
-            colorscale=[[0, color], [1, color]],
-            showscale=False,
-            marker_line_color="#333",
-            marker_line_width=1.0,
-            customdata=list(zip(df["Country"], df["country_display"])),
-            hovertemplate="%{customdata[1]}<extra></extra>",  # country name shown in regional view
-        )
-    )
-
-    # highlight selected country (outline)
+    # If there is a valid selected country in this region:
+    # draw everyone grey, then draw selected country in region color.
+    sel_row = None
     if selected_country:
-        row = df[df["Country"] == selected_country]
-        if not row.empty:
-            iso3 = row.iloc[0]["iso3"]
-            fig.add_trace(
-                go.Choropleth(
-                    locations=[iso3],
-                    z=[1],
-                    colorscale=[[0, color], [1, color]],
-                    showscale=False,
-                    marker_line_color="#000",
-                    marker_line_width=3.0,
-                    hoverinfo="skip",
-                )
+        sel_row = df[df["Country"] == selected_country]
+        if sel_row.empty:
+            sel_row = None
+
+    if sel_row is not None:
+        # 1) All countries grey
+        fig.add_trace(
+            go.Choropleth(
+                locations=df["iso3"],
+                z=[1] * len(df),
+                colorscale=[[0, grey_color], [1, grey_color]],
+                showscale=False,
+                marker_line_color="#333",
+                marker_line_width=1.0,
+                customdata=list(zip(df["Country"], df["country_display"])),
+                hovertemplate="%{customdata[1]}<extra></extra>",
             )
+        )
+
+        # 2) Selected country on top, region color (others remain grey)
+        iso3 = sel_row.iloc[0]["iso3"]
+        disp = sel_row.iloc[0]["country_display"]
+        fig.add_trace(
+            go.Choropleth(
+                locations=[iso3],
+                z=[1],
+                colorscale=[[0, region_color], [1, region_color]],
+                showscale=False,
+                marker_line_color="#333",
+                marker_line_width=1.0,
+                customdata=[(selected_country, disp)],
+                hovertemplate="%{customdata[1]}<extra></extra>",
+            )
+        )
+
+    else:
+        # No selection: show all countries in region color (same behavior as before)
+        fig.add_trace(
+            go.Choropleth(
+                locations=df["iso3"],
+                z=[1] * len(df),
+                colorscale=[[0, region_color], [1, region_color]],
+                showscale=False,
+                marker_line_color="#333",
+                marker_line_width=1.0,
+                customdata=list(zip(df["Country"], df["country_display"])),
+                hovertemplate="%{customdata[1]}<extra></extra>",
+            )
+        )
 
     bounds = REGION_BOUNDS.get(selected_region, {"lon": [-180, 180], "lat": [-60, 85]})
 
@@ -90,15 +114,13 @@ def update_region_map(selected_region, selected_country):
         projection_type="equirectangular",
         lonaxis=dict(range=bounds["lon"]),
         lataxis=dict(range=bounds["lat"]),
-
         # Hide all basemap layers so only your choropleth polygons are visible
-        visible=False,          # hides land/ocean/coastlines/graticules
+        visible=False,
         bgcolor="white",
     )
 
-
     fig.update_layout(
-        dragmode = False,
+        dragmode=False,
         margin=dict(l=0, r=0, t=0, b=0),
         uirevision=f"region-map-{selected_region}",
     )
