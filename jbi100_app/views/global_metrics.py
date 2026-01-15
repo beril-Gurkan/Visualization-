@@ -55,7 +55,7 @@ def global_metrics():
                 ], style={"margin-top": "8px", "margin-bottom": "15px"}),
             ]),
             html.Div([
-                dcc.Checklist(id="check-elec-capacity", options=[{"label": " Electricity generating capacity", "value": "elec_capacity"}], value=[]),
+                dcc.Checklist(id="check-elec-capacity", options=[{"label": " Electricity generation capacity (relative)", "value": "elec_capacity"}], value=[]),
                 html.Div([
                     html.Label("Importance", style={"display": "inline-block", "width": "70px"}),
                     dcc.Slider(id="slider-elec-capacity", min=0, max=100, step=1, value=55, marks={0: "0", 100: "100"}, tooltip={"placement": "bottom", "always_visible": True}),
@@ -90,4 +90,3 @@ def global_metrics():
 def reset_filters(n_clicks):
     """Reset all filters to default values."""
     return [], 60, [], 70, [], 50, [], 40, [], 65, [], 55
-

@@ -19,7 +19,7 @@ def make_metrics_panel(available_metrics, default_selected=None):
         ],
         "Global — Sustainability": [
             ("Electricity access (normalized)", "Elec_Access__norm"),
-            ("Electricity capacity (normalized)", "Elec_Capacity__norm"),
+            ("Electricity generation capacity (relative)", "Elec_Capacity__norm"),
         ],
         "Advanced — Region-specific (derived)": [
             ("Available Skilled Workforce", "Available_Skilled_Workforce__norm"),
