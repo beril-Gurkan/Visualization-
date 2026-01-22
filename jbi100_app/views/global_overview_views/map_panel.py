@@ -1,18 +1,13 @@
 from dash import dcc, html
 
 
-def map_card():
+def map_panel():
     return html.Div(
-        style={
-            "borderRadius": "12px",
-            "border": "1px solid rgba(0,0,0,0.12)",
-            "overflow": "hidden",
-            "background": "white",
-        },
+        className="panel", id="map-panel",
         children=[
             dcc.Graph(
                 id="globe-map",
-                style={"height": "62vh"},
+                className="graph-container",
                 config={
                     "displayModeBar": True,
                     "scrollZoom": True,
