@@ -1,5 +1,5 @@
 from dash.dependencies import Input, Output
-from jbi100_app.main import app
+from jbi100_app.app_instance import app
 from jbi100_app.views.detailed_info import detailed_info
 
 

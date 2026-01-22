@@ -1,5 +1,5 @@
 from dash.dependencies import Input, Output, State
-from jbi100_app.main import app
+from jbi100_app.app_instance import app
 
 # Hover behaviour: grey out other region traces in-place (no figure updates)
 app.clientside_callback(
@@ -7,7 +7,7 @@ app.clientside_callback(
     function(hoverData, fig) {
         if (!fig || !fig.data || !window.Plotly) return "";
 
-        const el = document.getElementById("global-map");
+        const el = document.getElementById("globe-map");
         if (!el) return "";
 
         const gd = el.querySelector(".js-plotly-plot");
@@ -19,8 +19,12 @@ app.clientside_callback(
         // choropleth traces only (skip legend helper traces if any)
         const choroplethIdx = [];
         for (let i = 0; i < fig.data.length; i++) {
-            if (fig.data[i].type === "choropleth") choroplethIdx.push(i);
+            const trace = fig.data[i];
+            if (trace.type !== "choropleth") continue;
+            if (trace.name && trace.name.toLowerCase().includes("selected")) continue;
+            choroplethIdx.push(i);
         }
+        if (choroplethIdx.length === 0) return "";
 
         // reset when not hovering
         if (!hoverData || !hoverData.points || hoverData.points.length === 0) {
@@ -40,6 +44,6 @@ app.clientside_callback(
     }
     """,
     Output("hover-sentinel", "children"),
-    Input("global-map", "hoverData"),
-    State("global-map", "figure"),
+    Input("globe-map", "hoverData"),
+    State("globe-map", "figure"),
 )

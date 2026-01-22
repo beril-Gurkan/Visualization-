@@ -3,7 +3,7 @@ import pandas as pd
 import plotly.graph_objects as go
 
 from dash.dependencies import Input, Output
-from jbi100_app.main import app
+from jbi100_app.app_instance import app
 from jbi100_app.data import get_data
 from jbi100_app.utils.country_meta import attach_country_meta
 

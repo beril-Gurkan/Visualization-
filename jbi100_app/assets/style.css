@@ -35,7 +35,7 @@ body {
 #global-metrics-wrapper {
     grid-area: metrics;
 }
-#global-map-wrapper {
+#globe-map-wrapper {
     grid-area: map;
 }
 

@@ -1,5 +1,5 @@
 from dash.dependencies import Input, Output
-from jbi100_app.main import app
+from jbi100_app.app_instance import app
 
 # Force Plotly to resize graphs after view switching (display:none -> display:grid)
 app.clientside_callback(
@@ -8,7 +8,7 @@ app.clientside_callback(
         function doResize() {
             if (!window.Plotly) return;
 
-            const ids = ["global-map", "ranking-bar", "region-map"];
+            const ids = ["globe-map", "ranking-bar", "region-map"];
             ids.forEach(id => {
                 const el = document.getElementById(id);
                 if (!el) return;

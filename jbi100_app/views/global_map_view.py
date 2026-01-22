@@ -67,7 +67,7 @@ def global_map_view():
             x=0.5,
             title_text="Region",
         ),
-        uirevision="global-map-stable",  # preserve view
+        uirevision="globe-map-stable",  # preserve view
         hoverlabel=dict(font_size=18, bgcolor="white"),
         dragmode = False,
     )
@@ -84,7 +84,7 @@ def global_map_view():
         children=[
             html.Div("Click a country to drill down to its region", style={"fontWeight": "700"}),
             dcc.Graph(
-                id="global-map",
+                id="globe-map",
                 figure=fig,
                 clear_on_unhover=True,  # so hoverData becomes None when leaving the map
                 config={
