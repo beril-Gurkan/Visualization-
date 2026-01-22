@@ -15,13 +15,13 @@ app.layout = html.Div(
     [
         dcc.Location(id="url", refresh=False),
         dcc.Store(id="selected_country", storage_type="memory"),
-        html.Div(id="page-content"),
+        html.Div(id="layout-container"),
     ]
 )
 
 # Simple routing
 @app.callback(
-    Output("page-content", "children"),
+    Output("layout-container", "children"),
     Input("url", "pathname"),
 )
 def display_page(pathname):

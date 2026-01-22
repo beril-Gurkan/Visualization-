@@ -1,9 +1,9 @@
 from dash import html, dcc
 
-from jbi100_app.views.global_overview_views.metrics_panel import metrics_panel
-from jbi100_app.views.global_overview_views.selected_countries_bar import selected_countries_bar
-from jbi100_app.views.global_overview_views.map_panel import map_panel
-from jbi100_app.views.global_overview_views.ranking_panel import ranking_panel
+from jbi100_app.views.global_overview.metrics_panel import metrics_panel
+from jbi100_app.views.global_overview.selected_countries_bar import selected_countries_bar
+from jbi100_app.views.global_overview.map_panel import map_panel
+from jbi100_app.views.global_overview.ranking_panel import ranking_panel
 
 
 def overview_layout():

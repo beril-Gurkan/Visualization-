@@ -1,13 +1,20 @@
-#complex-metrics-wrapper {
+#complex-metrics-panel {
     grid-area: metrics;
 }
-#region-map-wrapper {
-    grid-area: map;
+
+#plot-panel {
+    grid-area: plot;
 }
-#detailed-info-wrapper {
+
+#detailed-info-panel {
     grid-area: info;
 }
-#ranking-wrapper {
+
+#mini-map-panel {
+    grid-area: map;
+}
+
+#selected-ranking-panel {
     grid-area: ranking;
 }
 
