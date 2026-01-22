@@ -14,7 +14,6 @@ register_callbacks()
 app.layout = html.Div(
     [
         dcc.Location(id="url", refresh=False),
-        dcc.Store(id="selected_region", storage_type="memory"),
         dcc.Store(id="selected_country", storage_type="memory"),
         html.Div(id="page-content"),
     ]
@@ -26,7 +25,7 @@ app.layout = html.Div(
     Input("url", "pathname"),
 )
 def display_page(pathname):
-    if pathname == "/detail":
+    if pathname == "/detailed":
         return detailed_layout()
     return overview_layout()
 

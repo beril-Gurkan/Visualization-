@@ -19,6 +19,11 @@ def selected_countries_bar():
                         id="clear-selected",
                         n_clicks=0,
                     ),
+                    html.Button(
+                        "Continue",
+                        id="go-to-detail-button",
+                        n_clicks=0,
+                    ),
                 ],
                 className="wrapper"
             )

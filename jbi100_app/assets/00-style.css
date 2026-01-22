@@ -44,14 +44,18 @@ body {
     padding: 10px;
 }
 
-/* #title {
-    font-family: "Bebas Neue", sans-serif;
-    font-weight: 400;
-    font-style: normal;
-    color: var(--secondary);
-    font-size: 3rem;
-    text-align: left;
-} */
+#detailed-layout {
+    display: grid;
+    grid-template-areas:
+    "metrics map ranking"
+    "metrics info ranking";
+    grid-template-columns: 1fr 2fr 1fr;
+    grid-template-rows: 2fr 1fr;
+    height: 100%;
+    width: 100%;
+    gap: 10px;
+    padding: 10px;
+}
 
 .panel {
     display: flex;
@@ -78,63 +82,11 @@ body {
     align-self: flex-start;
 }
 
-/* -------------- */
-.layout {
-    display: grid;
-    gap: 16px;
-    padding: 16px;
-}
-
-#detailed-layout {
-    grid-template-areas:
-    "metrics map ranking"
-    "metrics info ranking";
-    grid-template-columns: 1fr 2fr 1fr;
-    grid-template-rows: 2fr 1fr;
-}
-#complex-metrics-wrapper {
-    grid-area: metrics;
-}
-#region-map-wrapper {
-    grid-area: map;
-}
-#detailed-info-wrapper {
-    grid-area: info;
-}
-#ranking-wrapper {
-    grid-area: ranking;
-}
-
-/* Detailed info panel styling */
-.detailed-info .detail-header {
-    border-bottom: 1px solid #e6e6e6;
-    padding-bottom: 8px;
-}
-
-.detailed-info .detail-title {
-    margin: 0;
-    font-size: 1.8rem;
-    font-weight: 700;
-}
-
-.detailed-info .detail-subtitle {
-    margin: 0;
-    font-size: 1.2rem;
-    color: #444;
-}
-
-.detailed-info .stats-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-}
-
-.detailed-info .stat-label {
-    font-size: 1.2rem;
-    color: #555;
-}
-
-.detailed-info .stat-value {
-    font-size: 1.3rem;
-    font-weight: 700;
-}
+/* #title {
+    font-family: "Bebas Neue", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    color: var(--secondary);
+    font-size: 3rem;
+    text-align: left;
+} */

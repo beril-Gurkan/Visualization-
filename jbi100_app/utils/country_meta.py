@@ -93,21 +93,20 @@ def _norm(s: str) -> str:
 @lru_cache(maxsize=1)
 def _iso_table() -> pd.DataFrame:
     """
-    Load ISO/UN metadata from jbi100_app/meta/all.csv.
-    Expected columns: name, alpha-3, region, (optionally sub-region, etc.)
+    Load ISO metadata from utils/all.csv. Expects columns: name, alpha-3.
+    Region data is ignored/optional because regions are no longer used.
     """
-    path = Path(__file__).parent.parent / "meta" / "all.csv"
+    path = Path(__file__).parent / "all.csv"
     if not path.exists():
         raise FileNotFoundError(
-            "Missing jbi100_app/meta/all.csv. Put the ISO+region file there "
-            "(separate from data_sets) so the map and region ranking work."
+            "Missing jbi100_app/utils/all.csv. Place the ISO reference file there."
         )
 
     iso = pd.read_csv(path)
-    if "name" not in iso.columns or "alpha-3" not in iso.columns or "region" not in iso.columns:
-        raise ValueError("meta/all.csv must contain at least columns: name, alpha-3, region")
+    if "name" not in iso.columns or "alpha-3" not in iso.columns:
+        raise ValueError("all.csv must contain at least columns: name, alpha-3")
 
-    # IMPORTANT: normalize ISO names using the same normalization as your dataset
+    # Normalize ISO names using the same normalization as the dataset
     iso["iso_key"] = iso["name"].apply(_norm)
     return iso
 
@@ -116,9 +115,8 @@ def _iso_table() -> pd.DataFrame:
 def _iso_maps():
     iso = _iso_table()
     iso_keys = set(iso["iso_key"])
-    region_map = dict(zip(iso["iso_key"], iso["region"]))
     a3_map = dict(zip(iso["iso_key"], iso["alpha-3"]))
-    return iso_keys, region_map, a3_map
+    return iso_keys, a3_map
 
 
 @lru_cache(maxsize=1)
@@ -129,10 +127,10 @@ def _norm_aliases():
 
 def resolve_iso_key(country_name: str) -> str | None:
     """
-    Convert your dataset's Country string into the normalized iso_key used by meta/all.csv.
+    Convert your dataset's Country string into the normalized iso_key used by utils/all.csv.
     Returns None if no match found.
     """
-    iso_keys, _, _ = _iso_maps()
+    iso_keys, _ = _iso_maps()
     c = _norm(country_name)
 
     if c in iso_keys:
@@ -150,20 +148,17 @@ def resolve_iso_key(country_name: str) -> str | None:
 
 
 def attach_country_meta(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Return a copy of df with:
-      - iso3 : ISO alpha-3 code (for plotting)
-      - region : region label (for coloring and filtering)
-      - country_display : nicer UI label
-    """
-    _, region_map, a3_map = _iso_maps()
+        """
+        Return a copy of df with ISO alpha-3 codes attached for plotting.
+        Adds columns:
+            - iso_key : normalized country key used internally
+            - iso3    : ISO alpha-3 code
+            - country_display : title-cased country name for UI
+        """
+        _, a3_map = _iso_maps()
 
-    out = df.copy()
-    out["iso_key"] = out["Country"].apply(resolve_iso_key)
-    out["iso3"] = out["iso_key"].map(a3_map)
-    out["region"] = out["iso_key"].map(region_map)
-    out["country_display"] = out["Country"].astype(str).str.title()
-    
-    # Manual region overrides for better continent sense
-    out.loc[out["iso3"] == "RUS", "region"] = "Asia"
-    return out
+        out = df.copy()
+        out["iso_key"] = out["Country"].apply(resolve_iso_key)
+        out["iso3"] = out["iso_key"].map(a3_map)
+        out["country_display"] = out["Country"].astype(str).str.title()
+        return out
