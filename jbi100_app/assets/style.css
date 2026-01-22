@@ -1,0 +1,109 @@
+body {
+    background-color: #f9f9f9;
+    color: #333333;
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    font-size: 15px;
+    margin: 0px;
+}
+
+/* Custom styling */
+#layout-container {
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    height: 100vh;
+}
+
+#title {
+    text-align: center;
+    margin: 10px 10px 0;
+}
+
+.layout {
+    display: grid;
+    flex: 1;
+    gap: 15px;
+    padding: 15px;
+}
+
+#overview-layout {
+    grid-template-areas:
+    "metrics map";
+    grid-template-columns: 1fr 3fr;
+    grid-template-rows: auto;
+}
+#global-metrics-wrapper {
+    grid-area: metrics;
+}
+#globe-map-wrapper {
+    grid-area: map;
+}
+
+#detailed-layout {
+    grid-template-areas:
+    "metrics map ranking"
+    "metrics info ranking";
+    grid-template-columns: 1fr 2fr 1fr;
+    grid-template-rows: 2fr 1fr;
+}
+#complex-metrics-wrapper {
+    grid-area: metrics;
+}
+#region-map-wrapper {
+    grid-area: map;
+}
+#detailed-info-wrapper {
+    grid-area: info;
+}
+#ranking-wrapper {
+    grid-area: ranking;
+}
+.panel {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    width: 100%;
+    height: 100%;
+    background-color: #ffffff;
+    border: 3px solid #4f4b4b;
+    border-radius: 15px;
+    padding: 12px;
+    gap: 10px;
+    font-size: 1.4rem;
+    color: #0c0b0b;
+}
+
+/* Detailed info panel styling */
+.detailed-info .detail-header {
+    border-bottom: 1px solid #e6e6e6;
+    padding-bottom: 8px;
+}
+
+.detailed-info .detail-title {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+.detailed-info .detail-subtitle {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #444;
+}
+
+.detailed-info .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.detailed-info .stat-label {
+    font-size: 1.2rem;
+    color: #555;
+}
+
+.detailed-info .stat-value {
+    font-size: 1.3rem;
+    font-weight: 700;
+}
