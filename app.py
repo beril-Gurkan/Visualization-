@@ -14,8 +14,8 @@ register_callbacks()
 app.layout = html.Div(
     [
         dcc.Location(id="url", refresh=False),
-        dcc.Store(id="selected_country", storage_type="memory"),
         dcc.Store(id="selected-countries", storage_type="memory"),
+        dcc.Store(id="selected_country", storage_type="memory"),
         html.Div(id="layout-container"),
     ]
 )

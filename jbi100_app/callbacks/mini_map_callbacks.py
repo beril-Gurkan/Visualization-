@@ -6,6 +6,7 @@ import pandas as pd
 from jbi100_app.app_instance import app
 from jbi100_app.data import get_data
 from jbi100_app.utils.country_meta import attach_country_meta
+from jbi100_app.config import selected_countries_color
 
 
 @app.callback(
@@ -49,8 +50,8 @@ def update_mini_map(selected_countries):
                 locations=sorted(selected_set),
                 z=[1] * len(selected_set),
                 showscale=False,
-                colorscale=[[0, "#fb923c"], [1, "#fb923c"]],
-                marker_line_color="#c2410c",
+                colorscale=[[0, selected_countries_color["fill"]], [1, selected_countries_color["fill"]]],
+                marker_line_color=selected_countries_color["line"],
                 marker_line_width=1.5,
                 marker_opacity=1.0,
                 hovertemplate="<b>%{hovertext}</b><extra></extra>",

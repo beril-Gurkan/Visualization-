@@ -1,4 +1,12 @@
-# Here you can add any global configuations
+# Map coloring configuration
+choropleth_score_colorscale = "Blues"
 
-color_list1 = ["green", "blue"]
-color_list2 = ["red", "purple"]
+# Selectred countries coloring
+selected_countries_color = {
+    "fill": "#fb923c",
+    "line": "#c2410c",
+}
+
+# Selected country coloring
+
+

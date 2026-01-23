@@ -8,6 +8,7 @@ from dash.dependencies import Input, Output
 from jbi100_app.app_instance import app
 from jbi100_app.data import get_data
 from jbi100_app.utils.country_meta import attach_country_meta
+from jbi100_app.config import selected_countries_color, choropleth_score_colorscale
 
 
 METRICS = {
@@ -137,7 +138,7 @@ def update_global_map(
         color="score",
         hover_name="Country",
         custom_data=metric_cols,
-        color_continuous_scale="Blues",
+        color_continuous_scale=choropleth_score_colorscale,
         range_color=(0, 1),
     )
 
@@ -165,8 +166,8 @@ def update_global_map(
                 locations=sorted(selected_set),
                 z=[1] * len(selected_set),
                 showscale=False,
-                colorscale=[[0, "#fb923c"], [1, "#fb923c"]],
-                marker_line_color="#c2410c",
+                colorscale=[[0, selected_countries_color["fill"]], [1, selected_countries_color["fill"]]],
+                marker_line_color=selected_countries_color["line"],
                 marker_line_width=2.2,
                 marker_opacity=0.9,
                 hoverinfo="skip",
@@ -194,7 +195,7 @@ def update_global_map(
         margin=dict(l=0, r=0, t=60, b=0),
         dragmode="pan",
         hovermode="closest",
-        clickmode="event",  # ✅ FIX: no Plotly selection fade
+        clickmode="event",  # no Plotly selection fade
         uirevision=f"globe-map-clear-{clear_clicks}",
     )
 
