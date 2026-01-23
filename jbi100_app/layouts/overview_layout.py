@@ -10,9 +10,6 @@ def overview_layout():
     return html.Div(
         id="overview-layout",
         children=[
-            # Stores must be in the layout
-            dcc.Store(id="selected-countries", data=[]),
-
             # Title panel
             html.Div(
                 id="title-panel",
