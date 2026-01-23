@@ -12,6 +12,50 @@
 
 #mini-map-panel {
     grid-area: map;
+    position: relative;
+    overflow: hidden;
+    gap: 0;
+    padding: 0;
+}
+
+#mini-map {
+    width: 100%;
+}
+
+/* Overlay - hidden by default */
+.mini-map-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease, backdrop-filter 0.3s ease;
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+    background-color: rgba(255, 255, 255, 0);
+}
+
+/* Show overlay with blur on hover */
+#mini-map-panel:hover .mini-map-overlay {
+    opacity: 1;
+    pointer-events: auto;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Text styling */
+.mini-map-overlay p {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    text-align: center;
+    transition: color 0.2s ease;
 }
 
 #selected-ranking-panel {

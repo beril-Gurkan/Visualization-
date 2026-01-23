@@ -15,7 +15,7 @@ app.layout = html.Div(
     [
         dcc.Location(id="url", refresh=False),
         dcc.Store(id="selected_country", storage_type="memory"),
-        dcc.Store(id="selected-countries", data=[]),
+        dcc.Store(id="selected-countries", storage_type="session"),
         html.Div(id="layout-container"),
     ]
 )
@@ -32,4 +32,4 @@ def display_page(pathname):
 
 
 if __name__ == "__main__":
-    app.run(debug=False)
+    app.run(debug=True)

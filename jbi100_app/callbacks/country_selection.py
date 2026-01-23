@@ -15,9 +15,10 @@ def toggle_selected(clickData, clear_clicks, selected):
     selected = selected or []
 
     ctx = callback_context
-    trigger = ctx.triggered[0]["prop_id"].split(".")[0] if ctx.triggered else None
+    trigger = ctx.triggered_id
 
-    if trigger == "clear-selected":
+    # Only clear if the button was actually clicked
+    if trigger == "clear-selected" and clear_clicks:
         return []
 
     if trigger != "globe-map":
@@ -30,8 +31,8 @@ def toggle_selected(clickData, clear_clicks, selected):
     if not iso3:
         return selected
 
-    iso3 = str(iso3).upper().strip()
-    s = {str(x).upper().strip() for x in selected if x}
+    iso3 = iso3.upper().strip()
+    s = {x.upper().strip() for x in selected if x}
 
     if iso3 in s:
         s.remove(iso3)

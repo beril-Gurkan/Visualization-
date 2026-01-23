@@ -3,3 +3,4 @@ def register_callbacks():
     import jbi100_app.callbacks.ranking_callbacks
     import jbi100_app.callbacks.country_selection
     import jbi100_app.callbacks.detail_callbacks
+    import jbi100_app.callbacks.mini_map_callbacks

@@ -20,6 +20,6 @@ def overview_layout():
             selected_countries_bar(),
             metrics_panel(),
             map_panel(),
-            ranking_panel(),
+            # ranking_panel(),
         ],
     )

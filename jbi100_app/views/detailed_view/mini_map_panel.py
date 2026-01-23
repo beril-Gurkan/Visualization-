@@ -6,12 +6,25 @@ def mini_map_panel():
         id="mini-map-panel",
         className="panel",
         children=[
+            dcc.Graph(
+                id="mini-map",
+                className="graph-container",
+                config={
+                    "displayModeBar": False,
+                    "scrollZoom": False,
+                    "doubleClick": "reset",
+                    "showTips": False,
+                },
+                style={"height": "100%", "width": "100%"}
+            ),
             dcc.Link(
-                html.Button(
-                    "Back to Overview",
-                    style={"cursor": "pointer", "width": "100%", "padding": "10px"}
+                html.Div(
+                    className="mini-map-overlay",
+                    children=[
+                        html.P("Click here to go back to global overview"),
+                    ]
                 ),
                 href="/"
-            )
+            ),
         ]
     )
