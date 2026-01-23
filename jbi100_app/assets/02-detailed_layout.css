@@ -192,7 +192,6 @@
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    gap: 8px;
 }
 
 .ranking-controls {
@@ -213,28 +212,46 @@
 
 .ranking-controls .Dropdown {
     font-size: 12px;
+    width: 280px !important;
+    min-width: 280px !important;
 }
 
-.ranking-controls .RadioItems {
-    margin-bottom: 10px;
+.ranking-controls .Dropdown > div {
+    width: 100% !important;
 }
 
-.ranking-controls .RadioItems label {
-    margin-right: 15px;
-    font-size: 11px;
+.ranking-controls .Select {
+    width: 280px !important;
+    min-width: 280px !important;
+}
+
+.ranking-controls .Select-control {
+    width: 100% !important;
+}
+
+#detailed-ranking-metric {
+    width: 280px !important;
+    min-width: 280px !important;
 }
 
 #detailed-ranking-bar {
     width: 100%;
-    height: 180px;
-    min-height: 140px;
+    height: 160px;
     flex-shrink: 0;
+    margin-bottom: 0 !important;
+}
+
+#detailed-ranking-bar > div {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
 }
 
 .ranking-divider {
-    margin: 6px 0;
-    border-color: #e5e5e5;
-    flex-shrink: 0;
+    margin: 0 !important;
+    padding: 0 !important;
+    height: 0 !important;
+    border: none !important;
+    display: none;
 }
 
 /* Scatterplot Section */
@@ -245,11 +262,14 @@
     min-height: 320px;
     min-width: 320px;
     overflow: hidden;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
 }
 
 .scatterplot-section h3 {
     font-size: 14px;
     font-weight: 600;
+    margin-top: 0 !important;
     margin-bottom: 4px;
     flex-shrink: 0;
 }

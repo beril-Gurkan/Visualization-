@@ -35,22 +35,7 @@ def selected_ranking_panel():
                             ),
                         ],
                     ),
-                    
-                    # Sort order
-                    html.Div(
-                        className="control-group",
-                        children=[
-                            dcc.RadioItems(
-                                id="detailed-ranking-order",
-                                value="asc",
-                                options=[
-                                    {"label": " Best → Worst", "value": "asc"},
-                                    {"label": " Worst → Best", "value": "desc"},
-                                ],
-                                inline=True,
-                            ),
-                        ],
-                    ),
+                    dcc.Store(id="detailed-ranking-order", data="desc"),
                 ],
             ),
             
@@ -58,10 +43,8 @@ def selected_ranking_panel():
             dcc.Graph(
                 id="detailed-ranking-bar",
                 config={"displayModeBar": False, "responsive": True},
+                style={"height": "400px", "marginBottom": "0px", "paddingBottom": "0px"},
             ),
-            
-            # Divider
-            html.Hr(className="ranking-divider"),
             
             # Scatterplot section
             html.Div(

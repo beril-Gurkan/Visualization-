@@ -9,7 +9,7 @@ Callbacks for the detailed view panels:
 import pandas as pd
 import plotly.graph_objects as go
 
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 from dash import html, dcc, callback_context
 
 from jbi100_app.app_instance import app
@@ -25,8 +25,8 @@ from jbi100_app.utils.country_meta import attach_country_meta
 
 # Color constants
 COLOR_DEFAULT = '#94a3b8'      # Gray for non-selected countries
-COLOR_SELECTED = '#22c55e'     # Green for selected countries
-COLOR_CLICKED = '#f97316'      # Orange for clicked/active country
+COLOR_SELECTED = '#f97316'     # Orange for selected countries 
+COLOR_CLICKED = '#22c55e'      # Green for clicked/active country
 
 
 def _compute_complex_scores(w_asf, w_iec, w_scc, w_wsi, w_ers,
@@ -90,10 +90,8 @@ def _compute_complex_scores(w_asf, w_iec, w_scc, w_wsi, w_ers,
 @app.callback(
     Output("detailed-ranking-bar", "figure"),
     Input("selected-countries", "data"),
+    Input("selected_country", "data"),
     Input("detailed-ranking-metric", "value"),
-    Input("detailed-ranking-order", "value"),
-    Input("detailed-ranking-bar", "clickData"),
-    Input("detailed-scatterplot", "clickData"),
     Input("weight-asf", "value"),
     Input("weight-iec", "value"),
     Input("weight-scc", "value"),
@@ -106,7 +104,7 @@ def _compute_complex_scores(w_asf, w_iec, w_scc, w_wsi, w_ers,
     Input("toggle-ers", "value"),
 )
 def update_detailed_ranking(
-    selected_countries, metric, order, ranking_click, scatter_click,
+    selected_countries, clicked_country, metric,
     w_asf, w_iec, w_scc, w_wsi, w_ers,
     t_asf, t_iec, t_scc, t_wsi, t_ers
 ):
@@ -143,21 +141,9 @@ def update_detailed_ranking(
     # Build selected set for highlighting
     selected_set = {str(x).upper().strip() for x in selected_countries if x}
     
-    # Determine clicked country
-    clicked_country = None
-    ctx = callback_context
-    if ctx.triggered:
-        trigger_id = ctx.triggered[0]['prop_id'].split('.')[0]
-        if trigger_id == 'detailed-scatterplot' and scatter_click:
-            points = scatter_click.get("points", [])
-            if points:
-                clicked_country = str(points[0].get("customdata", "")).upper().strip()
-        elif trigger_id == 'detailed-ranking-bar' and ranking_click:
-            points = ranking_click.get("points", [])
-            if points:
-                customdata = points[0].get("customdata")
-                if customdata and len(customdata) > 0:
-                    clicked_country = str(customdata[0]).upper().strip()
+    # Use persisted clicked country from Store
+    if clicked_country:
+        clicked_country = str(clicked_country).upper().strip()
     
     # Handle Complex_Metrics
     if metric == "Complex_Metrics":
@@ -188,20 +174,19 @@ def update_detailed_ranking(
         fig.update_layout(margin=dict(l=10, r=10, t=10, b=10), height=200)
         return fig
     
-    # Sort ALL countries
-    ascending = (order == "asc")
-    df_all = df_all.sort_values(by=metric_col, ascending=ascending).reset_index(drop=True)
+    df_all = df_all.sort_values(by=metric_col, ascending=False).reset_index(drop=True)
     df_all['rank'] = range(1, len(df_all) + 1)
     
     # Identify countries of interest (selected + clicked)
-    countries_of_interest_indices = set()
+    highlighted_indices = set()
+    clicked_idx = None
     
     # Add selected countries
     for idx, row in df_all.iterrows():
         country_upper = row['Country'].upper()
         iso3_upper = row['iso3'].upper() if pd.notna(row.get('iso3')) else ""
         if country_upper in selected_set or iso3_upper in selected_set:
-            countries_of_interest_indices.add(idx)
+            highlighted_indices.add(idx)
     
     # Add clicked country
     if clicked_country:
@@ -209,47 +194,97 @@ def update_detailed_ranking(
             country_upper = row['Country'].upper()
             iso3_upper = row['iso3'].upper() if pd.notna(row.get('iso3')) else ""
             if country_upper == clicked_country or iso3_upper == clicked_country:
-                countries_of_interest_indices.add(idx)
+                highlighted_indices.add(idx)
+                clicked_idx = idx
                 break
     
-    # Always aim for ~15 countries in the ranking
+    # Always aim for 15 visible entries in the ranking (countries + skip indicators)
     target_count = 15
-    indices_to_show = set()
     
-    if not countries_of_interest_indices:
+    # Build the final display list with skip indicators
+    # Strategy: Always include all highlighted countries, fill remaining slots from top,
+    # and insert "..." entries where countries are skipped
+    
+    if not highlighted_indices:
         # No selection - just show top 15
-        indices_to_show = set(range(min(target_count, len(df_all))))
-        show_skipped = len(df_all) > target_count
+        indices_to_show = list(range(min(target_count, len(df_all))))
+        skip_positions = []  # No skips needed
     else:
-        # Include all countries of interest
-        indices_to_show.update(countries_of_interest_indices)
+        # Sort highlighted indices
+        sorted_highlighted = sorted(highlighted_indices)
         
-        # Calculate how many more we can fit
-        remaining_slots = target_count - len(countries_of_interest_indices)
+        # Calculate how many filler slots we have (accounting for potential skip indicators)
+        num_highlighted = len(sorted_highlighted)
         
-        if remaining_slots > 0:
-            # Fill with top-ranked countries that aren't already included
-            for idx in range(len(df_all)):
-                if idx not in indices_to_show:
-                    indices_to_show.add(idx)
-                    remaining_slots -= 1
-                    if remaining_slots <= 0:
-                        break
+        # We need to figure out how many real countries we can show
+        # Each gap between highlighted countries may need a skip indicator
+        # Start by including all highlighted countries
+        indices_to_show = list(sorted_highlighted)
         
-        show_skipped = len(indices_to_show) < len(df_all)
+        # Calculate remaining slots for filler countries
+        remaining_slots = target_count - num_highlighted
+        
+        # Fill from the top of the ranking with non-highlighted countries
+        filler_indices = []
+        for idx in range(len(df_all)):
+            if idx not in highlighted_indices:
+                filler_indices.append(idx)
+                if len(filler_indices) >= remaining_slots:
+                    break
+        
+        # Combine and sort all indices to show
+        indices_to_show = sorted(set(indices_to_show + filler_indices))
+        
+        # Now we need to limit to target_count and identify where skips occur
+        if len(indices_to_show) > target_count:
+            # Prioritize highlighted countries, then top-ranked fillers
+            # Keep all highlighted, trim fillers from the bottom
+            final_indices = list(sorted_highlighted)
+            for idx in filler_indices:
+                if len(final_indices) >= target_count:
+                    break
+                final_indices.append(idx)
+            indices_to_show = sorted(final_indices)
     
-    # Sort indices for display
-    sorted_indices = sorted(indices_to_show)
-    df_plot = df_all.loc[sorted_indices].copy().reset_index(drop=True)
+    # Identify skip positions (gaps in the ranking where entries are skipped)
+    skip_positions = []
+    for i in range(1, len(indices_to_show)):
+        if indices_to_show[i] - indices_to_show[i-1] > 1:
+            # There's a gap - countries were skipped
+            skip_positions.append(i)
     
-    # Determine colors and create data for plot
+    # Also check if we're skipping at the end
+    if indices_to_show and indices_to_show[-1] < len(df_all) - 1:
+        skip_positions.append(len(indices_to_show))
+    
+    # Build display data with skip indicators inserted
     countries_list = []
     values_list = []
     colors_list = []
     customdata_list = []
     hovertext_list = []
     
-    for _, row in df_plot.iterrows():
+    # Track which skip positions we've inserted (offset increases as we insert)
+    skip_set = set(skip_positions)
+    display_idx = 0
+    
+    for i, idx in enumerate(indices_to_show):
+        # Check if we need to insert a skip indicator before this entry
+        if i in skip_set:
+            # Calculate how many countries were skipped
+            if i > 0:
+                skipped_count = indices_to_show[i] - indices_to_show[i-1] - 1
+            else:
+                skipped_count = indices_to_show[i]
+            
+            if skipped_count > 0:
+                countries_list.append(f"... ({skipped_count} skipped)")
+                values_list.append(0)
+                colors_list.append('#e5e5e5')  # Light gray for skip indicator
+                customdata_list.append(['', '', ''])
+                hovertext_list.append(f"{skipped_count} countries not shown")
+        
+        row = df_all.loc[idx]
         country_upper = row['Country'].upper()
         iso3_upper = row['iso3'].upper() if pd.notna(row.get('iso3')) else ""
         
@@ -272,6 +307,23 @@ def update_detailed_ranking(
             colors_list.append(COLOR_DEFAULT)
             hovertext_list.append(f"<b>{row['Country']}</b><br>{metric_label}: {row[metric_col]:.3f}<br>Rank: #{row['rank']}")
     
+    # Check if we need a trailing skip indicator
+    if len(indices_to_show) in skip_set and indices_to_show:
+        skipped_count = len(df_all) - 1 - indices_to_show[-1]
+        if skipped_count > 0:
+            countries_list.append(f"... ({skipped_count} more)")
+            values_list.append(0)
+            colors_list.append('#e5e5e5')
+            customdata_list.append(['', '', ''])
+            hovertext_list.append(f"{skipped_count} more countries not shown")
+    
+    # Reverse all lists so best (highest value) appears at top of horizontal bar chart
+    countries_list = countries_list[::-1]
+    values_list = values_list[::-1]
+    colors_list = colors_list[::-1]
+    customdata_list = customdata_list[::-1]
+    hovertext_list = hovertext_list[::-1]
+    
     # Create horizontal bar chart
     fig = go.Figure(
         go.Bar(
@@ -286,21 +338,25 @@ def update_detailed_ranking(
         )
     )
     
-    # Add title annotation if showing subset
+    # Add title annotation showing total countries
     title_text = metric_label
-    if show_skipped:
-        total_countries = len(df_all)
-        shown_countries = len(countries_list)
-        title_text += f" (showing {shown_countries} of {total_countries} countries)"
+    total_countries = len(df_all)
+    num_actual_countries = len(indices_to_show)
+    if num_actual_countries < total_countries:
+        title_text += f" ({num_actual_countries} of {total_countries} countries)"
     
     fig.update_layout(
         margin=dict(l=5, r=10, t=30, b=25),
+        height=400,
         xaxis_title=metric_label,
         xaxis_title_font_size=10,
-        yaxis=dict(automargin=True, tickfont=dict(size=9)),
+        yaxis=dict(
+            automargin=True, 
+            tickfont=dict(size=9),
+            fixedrange=True,
+        ),
         clickmode='event+select',
         hovermode='closest',
-        height=400,
         bargap=0.12,
         title=dict(text=title_text, font=dict(size=11), x=0.5, xanchor='center'),
     )
@@ -312,8 +368,7 @@ def update_detailed_ranking(
 @app.callback(
     Output("detailed-scatterplot", "figure"),
     Input("selected-countries", "data"),
-    Input("detailed-ranking-bar", "clickData"),
-    Input("detailed-scatterplot", "clickData"),
+    Input("selected_country", "data"),
     Input("scatter-x-axis", "value"),
     Input("scatter-y-axis", "value"),
     Input("weight-asf", "value"),
@@ -328,7 +383,7 @@ def update_detailed_ranking(
     Input("toggle-ers", "value"),
 )
 def update_detailed_scatterplot(
-    selected_countries, ranking_click, scatter_click,
+    selected_countries, clicked_country,
     x_axis, y_axis,
     w_asf, w_iec, w_scc, w_wsi, w_ers,
     t_asf, t_iec, t_scc, t_wsi, t_ers
@@ -352,7 +407,7 @@ def update_detailed_scatterplot(
     x_label = axis_labels.get(x_axis, x_axis)
     y_label = axis_labels.get(y_axis, y_axis)
     
-    # Get scores (compute all metrics for scatterplot)
+    # Get scores (compute all metrics)
     scores_df = _compute_complex_scores(w_asf, w_iec, w_scc, w_wsi, w_ers,
                                         True, True, True, True, True)
     
@@ -401,21 +456,9 @@ def update_detailed_scatterplot(
     # Build selected set for highlighting
     selected_set = {str(x).upper().strip() for x in selected_countries if x}
     
-    # Determine clicked country
-    clicked_country = None
-    ctx = callback_context
-    if ctx.triggered:
-        trigger_id = ctx.triggered[0]['prop_id'].split('.')[0]
-        if trigger_id == 'detailed-scatterplot' and scatter_click:
-            points = scatter_click.get("points", [])
-            if points:
-                clicked_country = str(points[0].get("customdata", "")).upper().strip()
-        elif trigger_id == 'detailed-ranking-bar' and ranking_click:
-            points = ranking_click.get("points", [])
-            if points:
-                customdata = points[0].get("customdata")
-                if customdata and len(customdata) > 0:
-                    clicked_country = str(customdata[0]).upper().strip()
+    # Use persisted clicked country from Store
+    if clicked_country:
+        clicked_country = str(clicked_country).upper().strip()
     
     # Create marker properties: clicked > selected > default
     marker_colors = []
@@ -472,13 +515,26 @@ def update_detailed_scatterplot(
     )
     
     fig.update_layout(
-        margin=dict(l=50, r=15, t=15, b=45),
-        xaxis_title=x_label,
-        yaxis_title=y_label,
-        xaxis_title_font_size=11,
-        yaxis_title_font_size=11,
+        margin=dict(l=55, r=15, t=15, b=60),
+        xaxis=dict(
+            title=x_label,
+            title_font_size=11,
+            title_standoff=10,
+        ),
+        yaxis=dict(
+            title=y_label,
+            title_font_size=11,
+            title_standoff=10,
+        ),
         hovermode='closest',
         clickmode='event',
+        # Enable animations for smooth transitions when weights change
+        transition=dict(
+            duration=500,
+            easing='cubic-in-out'
+        ),
+        # Keep the same view when data updates (enables animation)
+        uirevision='scatterplot',
     )
     
     return fig
@@ -757,3 +813,30 @@ def update_selected_indicator(ranking_click, scatter_click):
         ])
     
     return "Click a bar or point to select a country"
+
+
+# ===== TRACK CLICKED COUNTRY =====
+@app.callback(
+    Output("selected_country", "data"),
+    Input("detailed-ranking-bar", "clickData"),
+    Input("detailed-scatterplot", "clickData"),
+)
+def update_selected_country(ranking_click, scatter_click):
+    """Track the currently clicked/active country across metric changes."""
+    clicked_country = None
+    
+    ctx = callback_context
+    if ctx.triggered:
+        trigger_id = ctx.triggered[0]['prop_id'].split('.')[0]
+        if trigger_id == 'detailed-scatterplot' and scatter_click:
+            points = scatter_click.get("points", [])
+            if points:
+                clicked_country = str(points[0].get("customdata", "")).upper().strip()
+        elif trigger_id == 'detailed-ranking-bar' and ranking_click:
+            points = ranking_click.get("points", [])
+            if points:
+                customdata = points[0].get("customdata")
+                if customdata and len(customdata) > 0:
+                    clicked_country = str(customdata[0]).upper().strip()
+    
+    return clicked_country
