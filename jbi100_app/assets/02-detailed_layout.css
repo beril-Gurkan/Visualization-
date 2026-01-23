@@ -10,6 +10,7 @@
     grid-area: info;
 }
 
+/* ---------- MINI MAP ---------- */
 #mini-map-panel {
     grid-area: map;
     position: relative;
@@ -58,8 +59,22 @@
     transition: color 0.2s ease;
 }
 
+/* ---------- RANKING PANEL ---------- */
 #selected-ranking-panel {
     grid-area: ranking;
+    justify-content: flex-start;
+}
+
+.ranking-country-list {
+
+}
+
+.ranking-country-item {
+
+}
+
+.empty-message {
+
 }
 
 /* Detailed info panel styling */

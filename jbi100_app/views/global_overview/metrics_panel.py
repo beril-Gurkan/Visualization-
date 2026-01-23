@@ -5,7 +5,8 @@ def metrics_panel():
     return html.Div(
         className="panel", id="global-metrics-panel",
         children=[
-            html.H1("Global Metrics"),
+            # html.H1("Global Metrics"),
+            html.H3("Global Metrics", className="panel-title"),
             html.Div(
                 className="global-metric",
                 children=[
