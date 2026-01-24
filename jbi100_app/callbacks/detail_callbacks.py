@@ -347,7 +347,7 @@ def update_detailed_ranking(
     
     fig.update_layout(
         margin=dict(l=5, r=10, t=30, b=25),
-        height=400,
+        height=450,
         xaxis_title=metric_label,
         xaxis_title_font_size=10,
         yaxis=dict(
