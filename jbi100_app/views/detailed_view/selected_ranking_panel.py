@@ -3,8 +3,7 @@ from dash import html, dcc
 
 def selected_ranking_panel():
     """
-    Panel that shows the ranking of all countries with selected ones highlighted,
-    and a scatterplot below for comparing countries on complex metrics.
+    Panel that shows the ranking of all countries with selected ones highlighted.
     """
     return html.Div(
         id="selected-ranking-panel",
@@ -43,66 +42,7 @@ def selected_ranking_panel():
             dcc.Graph(
                 id="detailed-ranking-bar",
                 config={"displayModeBar": False, "responsive": True},
-                style={"height": "400px", "marginBottom": "0px", "paddingBottom": "0px"},
-            ),
-            
-            # Scatterplot section
-            html.Div(
-                className="scatterplot-section",
-                children=[
-                    html.H3("Metric Comparison"),
-                    
-                    # Axis selection dropdowns
-                    html.Div(
-                        className="axis-controls",
-                        children=[
-                            html.Div(
-                                className="axis-control",
-                                children=[
-                                    html.Label("X-Axis:", className="axis-label"),
-                                    dcc.Dropdown(
-                                        id="scatter-x-axis",
-                                        clearable=False,
-                                        value="ASF",
-                                        options=[
-                                            {"label": "Skilled Workforce", "value": "ASF"},
-                                            {"label": "Energy Capacity", "value": "IEC"},
-                                            {"label": "Supply Chain", "value": "SCC"},
-                                            {"label": "Wage Sustainability", "value": "WSI"},
-                                            {"label": "Economic Resilience", "value": "ERS"},
-                                        ],
-                                    ),
-                                ],
-                            ),
-                            html.Div(
-                                className="axis-control",
-                                children=[
-                                    html.Label("Y-Axis:", className="axis-label"),
-                                    dcc.Dropdown(
-                                        id="scatter-y-axis",
-                                        clearable=False,
-                                        value="IEC",
-                                        options=[
-                                            {"label": "Skilled Workforce", "value": "ASF"},
-                                            {"label": "Energy Capacity", "value": "IEC"},
-                                            {"label": "Supply Chain", "value": "SCC"},
-                                            {"label": "Wage Sustainability", "value": "WSI"},
-                                            {"label": "Economic Resilience", "value": "ERS"},
-                                        ],
-                                    ),
-                                ],
-                            ),
-                        ],
-                    ),
-                    
-                    html.P("Click a point to select a country", className="scatterplot-hint"),
-                    
-                    # Scatterplot graph
-                    dcc.Graph(
-                        id="detailed-scatterplot",
-                        config={"displayModeBar": True, "responsive": True},
-                    ),
-                ],
+                style={"flex": "1", "width": "100%"},
             ),
             
             # Selected country indicator
