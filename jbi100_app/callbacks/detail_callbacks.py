@@ -369,6 +369,8 @@ def update_detailed_ranking(
     Output("detailed-scatterplot", "figure"),
     Input("selected-countries", "data"),
     Input("selected_country", "data"),
+    Input("metric-brush", "data"),
+    Input("metric-brush-rev","data"),
     Input("scatter-x-axis", "value"),
     Input("scatter-y-axis", "value"),
     Input("weight-asf", "value"),
@@ -383,7 +385,7 @@ def update_detailed_ranking(
     Input("toggle-ers", "value"),
 )
 def update_detailed_scatterplot(
-    selected_countries, clicked_country,
+    selected_countries, clicked_country, brushed_iso3, brush_rev,
     x_axis, y_axis,
     w_asf, w_iec, w_scc, w_wsi, w_ers,
     t_asf, t_iec, t_scc, t_wsi, t_ers
@@ -394,6 +396,9 @@ def update_detailed_scatterplot(
     - Clicked country is highlighted in orange
     """
     selected_countries = selected_countries or []
+    brushed_iso3 = brushed_iso3 or []
+    brushed_set = {str(x).upper().strip() for x in brushed_iso3 if x}
+
     
     # Axis label mapping
     axis_labels = {
@@ -440,7 +445,7 @@ def update_detailed_scatterplot(
         fig.update_layout(margin=dict(l=20, r=20, t=20, b=20))
         return fig
     
-    df_plot = df_plot.dropna(subset=[x_axis, y_axis])
+    df_plot = df_plot.dropna(subset=[x_axis, y_axis, "iso3"])
     
     if df_plot.empty:
         fig = go.Figure()
@@ -455,6 +460,8 @@ def update_detailed_scatterplot(
     
     # Build selected set for highlighting
     selected_set = {str(x).upper().strip() for x in selected_countries if x}
+    brushed_set = {str(x).upper().strip() for x in (brushed_iso3 or []) if x}
+    has_brush = len(brushed_set) > 0
     
     # Use persisted clicked country from Store
     if clicked_country:
@@ -469,6 +476,7 @@ def update_detailed_scatterplot(
     for _, row in df_plot.iterrows():
         country_upper = row['Country'].upper()
         iso3_upper = row['iso3'].upper() if pd.notna(row.get('iso3')) else ""
+        is_brushed = iso3_upper in brushed_set
         
         # Check if this country is the clicked one
         is_clicked = clicked_country and (country_upper == clicked_country or iso3_upper == clicked_country)
@@ -487,11 +495,17 @@ def update_detailed_scatterplot(
             marker_sizes.append(11)
             marker_opacities.append(0.9)
             marker_line_widths.append(1)
+        elif is_brushed:
+            # brushed but not selected/clicked
+            marker_colors.append(COLOR_DEFAULT)   # or a distinct color if you want
+            marker_sizes.append(10)
+            marker_opacities.append(0.9)
+            marker_line_widths.append(1)
         else:
             # All other countries are gray and smaller
             marker_colors.append(COLOR_DEFAULT)
             marker_sizes.append(7)
-            marker_opacities.append(0.5)
+            marker_opacities.append(0.15 if has_brush else 0.5)
             marker_line_widths.append(0)
     
     # Create scatterplot
@@ -507,7 +521,7 @@ def update_detailed_scatterplot(
                 line=dict(width=marker_line_widths, color='#1f2937')
             ),
             text=df_plot['Country'],
-            customdata=df_plot['Country'],
+            customdata=df_plot[['Country','iso3']],
             hovertemplate="<b>%{text}</b><br>" +
                           f"{x_label}: %{{x:.3f}}<br>" +
                           f"{y_label}: %{{y:.3f}}<extra></extra>",
@@ -528,13 +542,14 @@ def update_detailed_scatterplot(
         ),
         hovermode='closest',
         clickmode='event',
+        dragmode='select',
         # Enable animations for smooth transitions when weights change
         transition=dict(
             duration=500,
             easing='cubic-in-out'
         ),
         # Keep the same view when data updates (enables animation)
-        uirevision='scatterplot',
+        uirevision=f"scatter-{int(brush_rev or 0)}",
     )
     
     return fig
