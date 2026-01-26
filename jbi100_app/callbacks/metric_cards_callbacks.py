@@ -8,43 +8,47 @@ from dash.dependencies import Input, Output, State
 from dash import callback_context
 
 from jbi100_app.app_instance import app
-from jbi100_app.data import (
-    ensure_data_loaded,
-    available_skilled_workforce,
-    industrial_energy_capacity,
-    supply_chain_connectivity_score,
-    wage_sustainability_index,
-    economic_resilience_score,
-)
+from jbi100_app.data import get_data
 from jbi100_app.utils.country_meta import attach_country_meta
 
+# Reuse the "original" complex-score computation logic (from detailed callbacks)
+from jbi100_app.utils.complex_scores import compute_complex_scores
 
-# keep these keys consistent with the figure calls ("ASF", "IEC", ...)
-METRICS = {
-    "ASF": {"label": "Available Skilled Workforce", "fn": available_skilled_workforce},
-    "IEC": {"label": "Industrial Energy Capacity", "fn": industrial_energy_capacity},
-    "SCC": {"label": "Supply Chain Connectivity", "fn": supply_chain_connectivity_score},
-    "WSI": {"label": "Wage Sustainability Index", "fn": wage_sustainability_index},
-    "ERS": {"label": "Economic Resilience", "fn": economic_resilience_score},
-}
+
+# keeping keys consistent with the figure calls ("ASF", "IEC", ...)
+METRIC_KEYS = ["ASF", "IEC", "SCC", "WSI", "ERS"]
 
 
 def _build_all_metrics_df() -> pd.DataFrame:
-    base = ensure_data_loaded().copy()
-    base = attach_country_meta(base).dropna(subset=["iso3"]).copy()
+    """
+    Builds a single DF with:
+      Country, iso3, ASF, IEC, SCC, WSI, ERS
+    using the "original" complex-score computation (detail_callbacks version).
+
+    NOTE:
+    - Preferred: jbi100_app.utils.complex_scores.compute_complex_scores
+    - Fallback: if that module doesn't exist yet, this will raise with a clear message.
+    """
+    if compute_complex_scores is None:
+        raise ImportError(
+            "Missing jbi100_app.utils.complex_scores.compute_complex_scores. "
+            "Create it by moving the _compute_complex_scores logic out of detail_callbacks "
+            "into a shared utility, then import it here."
+        )
+
+    # Compute all 5 metric columns (weights don't matter when you just need the raw columns).
+    scores_df = compute_complex_scores(
+        1, 1, 1, 1, 1,   # dummy equal weights
+        True, True, True, True, True
+    )
+
+    base = attach_country_meta(get_data()).copy()
+    base = base.dropna(subset=["iso3"]).copy()
     base["Country"] = base["Country"].astype(str)
     base["iso3"] = base["iso3"].astype(str).str.upper().str.strip()
 
-    out = base[["Country", "iso3"]].drop_duplicates().copy()
-
-    for key, meta in METRICS.items():
-        s = meta["fn"]()  # Series indexed by Country
-        tmp = pd.DataFrame(
-            {"Country": s.index.astype(str), key: pd.to_numeric(s.values, errors="coerce")}
-        )
-        out = out.merge(tmp, on="Country", how="inner")
-
-    out = out.dropna(subset=list(METRICS.keys())).copy()
+    out = base[["Country", "iso3"]].drop_duplicates().merge(scores_df, on="Country", how="inner")
+    out = out.dropna(subset=METRIC_KEYS).copy()
     return out
 
 
@@ -95,7 +99,7 @@ def _metric_card_fig(
     iso_all = df_all["iso3"].to_numpy()
     country_all = df_all["Country"].to_numpy()
 
-    # ---- Histogram bins over [0,1]
+    # Histogram bins over [0,1]
     bins = np.linspace(0, 1, 21)  # 20 bins
     counts, edges = np.histogram(x_all, bins=bins)
     centers = (edges[:-1] + edges[1:]) / 2.0
@@ -104,7 +108,7 @@ def _metric_card_fig(
 
     fig = go.Figure()
 
-    # ---- Base histogram
+    # Base histogram
     fig.add_trace(
         go.Bar(
             x=centers,
@@ -116,7 +120,7 @@ def _metric_card_fig(
         )
     )
 
-    # ---- Highlight bins containing selected countries
+    # Highlight bins containing selected countries
     if selected_iso3:
         sel_mask = np.isin(iso_all, list(selected_iso3))
         x_sel_for_bins = x_all[sel_mask]
@@ -137,7 +141,26 @@ def _metric_card_fig(
                 )
             )
 
-    # ---- Median line
+    # Highlight bin containing ACTIVE (clicked) country (green)
+    if active_iso3:
+        act_row = df_all[df_all["iso3"] == active_iso3]
+        if not act_row.empty:
+            x_act = float(act_row.iloc[0][metric_key])
+            act_idx = np.digitize([x_act], bins) - 1
+            act_idx = int(np.clip(act_idx[0], 0, len(centers) - 1))
+
+            fig.add_trace(
+                go.Bar(
+                    x=[centers[act_idx]],
+                    y=[counts[act_idx]],
+                    width=bin_w,
+                    marker=dict(color="rgba(34,197,94,0.45)"),
+                    hoverinfo="skip",
+                    name="Active bin",
+                )
+            )
+
+    # Median line
     global_median = float(np.nanmedian(x_all))
     fig.add_vline(
         x=global_median,
@@ -191,7 +214,6 @@ def _metric_card_fig(
     active_mask_all = (iso_all == active_iso3) if active_iso3 else np.zeros(len(iso_all), dtype=bool)
     active_mask_sel = (iso_sel == active_iso3) if active_iso3 else np.zeros(len(iso_sel), dtype=bool)
 
-    # NOTE: increase 0.25 to make non-brushed more visible during brush
     base_op_all = np.where(brushed_mask_all, 0.85, 0.25 if has_brush else 0.25)
     base_sz_all = np.where(brushed_mask_all, 9, 6)
     base_lw_all = np.where(brushed_mask_all, 2.2, 0.4)
@@ -200,7 +222,6 @@ def _metric_card_fig(
     base_sz_sel = np.where(brushed_mask_sel, 12, 9)
     base_lw_sel = np.where(brushed_mask_sel, 3.0, 1.0)
 
-    # Active (green) is applied by styling the existing point
     colors_all = np.array(["rgba(100,116,139,0.55)"] * len(iso_all), dtype=object)
     colors_sel = np.array(["#fb923c"] * len(iso_sel), dtype=object)
 
@@ -239,7 +260,7 @@ def _metric_card_fig(
         )
     )
 
-    # Rug: selected countries (orange)
+    # Rug: selected countries
     fig.add_trace(
         go.Scatter(
             x=np.clip(x_sel_raw + x_jit_sel, 0, 1),
@@ -263,7 +284,7 @@ def _metric_card_fig(
     )
 
     fig.update_layout(
-        margin=dict(l=8, r=8, t=8, b=8),
+        margin=dict(l=2, r=2, t=2, b=2),
         dragmode="select",
         showlegend=False,
         hovermode="closest",
@@ -291,9 +312,7 @@ def _metric_card_fig(
     return fig
 
 
-# --------------------------
-# Brush revision (keep!)
-# --------------------------
+# Brush revision
 @app.callback(
     Output("metric-brush-rev", "data"),
     Input("metric-brush", "data"),
@@ -305,9 +324,7 @@ def bump_brush_revision(_brush, rev):
     return rev + 1
 
 
-# --------------------------
 # Metric cards figures
-# --------------------------
 @app.callback(
     Output("metric-card-asf", "figure"),
     Output("metric-card-iec", "figure"),
@@ -326,7 +343,6 @@ def update_metric_cards(selected_countries, brushed, brush_rev, expanded_metric,
     selected_set = {str(x).upper().strip() for x in (selected_countries or []) if x}
     brushed_set = {str(x).upper().strip() for x in (brushed or []) if x}
 
-    # Convert clicked_country (Country name or ISO3) -> ISO3
     active_iso3 = None
     if clicked_country:
         cc = str(clicked_country).upper().strip()
@@ -353,10 +369,7 @@ def update_metric_cards(selected_countries, brushed, brush_rev, expanded_metric,
     )
 
 
-# --------------------------
-# ✅ Brush store: metric cards OR detailed scatterplot
-# ✅ PLUS: double-click in scatterplot clears the brush everywhere
-# --------------------------
+# Brush store: metric cards OR detailed scatterplot
 @app.callback(
     Output("metric-brush", "data"),
     Input("metric-card-asf", "selectedData"),
@@ -365,7 +378,7 @@ def update_metric_cards(selected_countries, brushed, brush_rev, expanded_metric,
     Input("metric-card-wsi", "selectedData"),
     Input("metric-card-ers", "selectedData"),
     Input("detailed-scatterplot", "selectedData"),
-    Input("detailed-scatterplot", "relayoutData"),   # ✅ NEW: detect double-click reset
+    Input("detailed-scatterplot", "relayoutData"),  # detect double-click reset
     Input("metric-brush-clear", "n_clicks"),
     State("metric-brush", "data"),
     prevent_initial_call=True,
@@ -382,22 +395,16 @@ def store_metric_brush(
     - Clear button resets brush to [].
     - Double-click reset in scatterplot (relayoutData autorange) resets brush to [].
     """
-    ctx = callback_context
-    trig = ctx.triggered_id
+    trig = callback_context.triggered_id
     current_brush = current_brush or []
 
-    # 1) Clear button
     if trig == "metric-brush-clear" and clear_clicks:
         return []
 
-    # 2) Double click in scatterplot (Plotly reset axes)
     if trig == "detailed-scatterplot" and isinstance(scatter_relayout, dict):
-        # Common signatures for double-click reset
         if scatter_relayout.get("xaxis.autorange") or scatter_relayout.get("yaxis.autorange"):
             return []
-        # sometimes shows as "xaxis.range[0]" / etc; ignore those (zoom/pan)
 
-    # 3) Normal selection handling
     selectedData = None
     if trig == "metric-card-asf":
         selectedData = sel_asf

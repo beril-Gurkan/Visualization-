@@ -16,8 +16,17 @@ INFO_TEXT = (
     "• Clear brush resets linked selections\n"
 )
 
+METRIC_FULL = {
+    "ASF": "Available Skilled Workforce",
+    "IEC": "Industrial Energy Capacity",
+    "SCC": "Supply Chain Connectivity",
+    "WSI": "Wage Sustainability Index",
+    "ERS": "Economic Resilience Score",
+}
+
 
 def _metric_header(short_label: str, expand_btn_id: str):
+    full = METRIC_FULL.get(short_label, short_label)
     return html.Div(
         className="metric-card-header",
         children=[
@@ -25,7 +34,8 @@ def _metric_header(short_label: str, expand_btn_id: str):
                 className="metric-card-title-wrap",
                 children=[
                     html.H3(short_label, className="metric-card-title"),
-                    html.Span("i", className="info-icon", title=INFO_TEXT),
+                    # Per-metric tooltip uses full name
+                    html.Span("i", className="info-icon", title=full),
                 ],
             ),
             html.Button(
@@ -52,6 +62,7 @@ def plot_panel():
                         className="plot-panel-title-wrap",
                         children=[
                             html.H2("Complex Metrics Overview", className="panel-title"),
+                            # Panel-level tooltip keeps INFO_TEXT
                             html.Span("i", className="info-icon", title=INFO_TEXT),
                         ],
                     ),
@@ -84,7 +95,6 @@ def plot_panel():
                     ),
                 ],
             ),
-
             html.Div(
                 id="metric-cards-grid",
                 className="metric-cards-grid",

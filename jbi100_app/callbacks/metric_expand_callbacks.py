@@ -26,7 +26,6 @@ def _enabled_map(t_asf, t_iec, t_scc, t_wsi, t_ers):
     Input("metric-expand-wsi", "n_clicks"),
     Input("metric-expand-ers", "n_clicks"),
     Input("metric-expand-clear", "n_clicks"),
-    # also respond when toggles change (to auto-clear invalid expanded state)
     Input("toggle-asf", "value"),
     Input("toggle-iec", "value"),
     Input("toggle-scc", "value"),
@@ -75,7 +74,7 @@ def toggle_expanded(_a, _b, _c, _d, _e, _clear, t_asf, t_iec, t_scc, t_wsi, t_er
     Output("metric-card-wrap-scc", "className"),
     Output("metric-card-wrap-wsi", "className"),
     Output("metric-card-wrap-ers", "className"),
-    # ✅ styles to actually hide/show cards
+    # Styles to actually hide/show cards
     Output("metric-card-wrap-asf", "style"),
     Output("metric-card-wrap-iec", "style"),
     Output("metric-card-wrap-scc", "style"),
