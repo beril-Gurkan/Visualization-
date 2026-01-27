@@ -16,6 +16,9 @@ app.layout = html.Div(
         dcc.Location(id="url", refresh=False),
         dcc.Store(id="selected_country", storage_type="memory"),
         dcc.Store(id="selected-countries", storage_type="memory"),
+        dcc.Store(id="metric-brush", storage_type="memory"),
+        dcc.Store(id="metric-brush-rev", storage_type="memory"),
+        dcc.Store(id="expanded-metric", storage_type="memory"),
         html.Div(id="layout-container"),
     ]
 )
