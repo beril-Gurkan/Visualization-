@@ -4,6 +4,9 @@ from dash import callback_context
 from jbi100_app.app_instance import app
 
 
+MAX_SELECTED_COUNTRIES = 10
+
+
 @app.callback(
     Output("selected-countries", "data"),
     Input("globe-map", "clickData"),
@@ -37,6 +40,9 @@ def toggle_selected(clickData, clear_clicks, selected):
     if iso3 in s:
         s.remove(iso3)
     else:
+        # Cap the number of selected countries to MAX_SELECTED_COUNTRIES
+        if len(s) >= MAX_SELECTED_COUNTRIES:
+            return sorted(s)  # Don't add more if already at limit
         s.add(iso3)
 
     return sorted(s)
@@ -50,4 +56,7 @@ def label(selected):
     selected = selected or []
     if not selected:
         return "None"
-    return ", ".join(selected[:10]) + (f" (+{len(selected)-10} more)" if len(selected) > 10 else "")
+    label_text = ", ".join(selected)
+    if len(selected) >= MAX_SELECTED_COUNTRIES:
+        label_text += f" (max {MAX_SELECTED_COUNTRIES})"
+    return label_text

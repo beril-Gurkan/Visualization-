@@ -47,10 +47,10 @@ body {
 #detailed-layout {
     display: grid;
     grid-template-areas:
-    "metrics plot map"
-    "metrics plot ranking"
-    "metrics info ranking";
-    grid-template-columns: 0.75fr 2fr 1fr;
+    "metrics plot plot map"
+    "metrics plot plot ranking"
+    "metrics info-left info-right ranking";
+    grid-template-columns: 0.6fr 1fr 1fr 1fr;
     grid-template-rows: 2fr 1fr 3fr;
     width: 100vw;
     height: 100vh;

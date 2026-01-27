@@ -275,6 +275,7 @@ def update_detailed_ranking(
 
     fig.update_layout(
         margin=dict(l=5, r=10, t=30, b=25),
+        height=450,
         xaxis_title=metric_label,
         xaxis_title_font_size=10,
         yaxis=dict(automargin=True, tickfont=dict(size=9), fixedrange=True),
@@ -529,9 +530,14 @@ def update_detailed_info(ranking_click, scatter_click, selected_countries):
                         className="stat-item",
                         children=[
                             html.Div(label, className="stat-label"),
-                            html.Div(formatted_val, className="stat-value"),
-                            html.Div(rank_info, className="stat-rank"),
-                        ],
+                            html.Div(
+                                className="stat-value-row",
+                                children=[
+                                    html.Div(formatted_val, className="stat-value"),
+                                    html.Div(rank_info, className="stat-rank"),
+                                ]
+                            ),
+                        ]
                     )
                 )
 
@@ -638,31 +644,41 @@ def update_detailed_info(ranking_click, scatter_click, selected_countries):
             figure=radar_fig,
             config={"displayModeBar": False, "responsive": True},
         )
-
-    return html.Div(
-        [
-            html.Div(
-                className="detail-header",
-                children=[
-                    html.H3(country_display, className="detail-title"),
-                    html.P("Key Statistics & Complex Metrics", className="detail-subtitle"),
-                ],
-            ),
-            html.Div(
-                className="detail-content",
-                children=[
-                    html.Div(stats_children, className="stats-column"),
-                    html.Div(
-                        className="radar-column",
-                        children=[
-                            html.Div("Complex Metrics Profile", className="radar-title"),
-                            radar_element,
-                        ],
-                    ),
-                ],
-            ),
-        ]
-    )
+    
+    # ===== COMBINE STATS AND RADAR SIDE BY SIDE =====
+    return html.Div([
+        # Header
+        html.Div(
+            className="detail-header",
+            children=[
+                html.H3(country_display, className="detail-title"),
+                html.P("Key Statistics & Complex Metrics", className="detail-subtitle"),
+            ]
+        ),
+        
+        # Two-column layout
+        html.Div(
+            className="detail-content",
+            children=[
+                # Left: Stats (hidden by default, shown on Info button hover)
+                html.Div(
+                    className="stats-wrapper",
+                    children=[
+                        html.Button("i", className="info-button", title="Hover for stats"),
+                        html.Div(stats_children, className="stats-column-hidden"),
+                    ]
+                ),
+                # Right: Radar
+                html.Div(
+                    className="radar-column",
+                    children=[
+                        html.Div("Complex Metrics Profile", className="radar-title"),
+                        radar_element,
+                    ]
+                ),
+            ]
+        ),
+    ])
 
 
 # ===== SELECTED COUNTRY INDICATOR =====
