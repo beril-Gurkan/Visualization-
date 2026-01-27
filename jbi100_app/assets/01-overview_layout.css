@@ -1,50 +1,54 @@
-/* Global Metrics Panel */
+/* ----- Global Metrics Panel ----- */
 #global-metrics-panel {
     grid-area: metrics;
     overflow-y: auto;
 }
 
-#global-metrics-panel h1 {
-    margin: 0 0 18px 0;
-    font-size: 44px;
-    font-weight: 500;
-}
-
 .global-metric {
     width: 100%;
+    border: 1px solid var(--background);
+    border-radius: 15px;
+    padding: 10px;
+    margin-bottom: 20px;
 }
 
 .global-metric h2 {
-    font-size: 30px;
-    margin-bottom: 10px;
-    font-weight: 500;
+    font-family: "Geist", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 800;
+    font-style: normal;
+    color: var(--primary);
+    font-size: 24px;
+    margin-bottom: 15px;
 }
 
 .global-metric .importance-label {
-    margin-top: 8px;
+    color: var(--secondary);
+    text-align: center;
     font-size: 16px;
+    margin: 4px 0 2px;
 }
 
 .global-metric .slider-spacer {
     height: 14px;
 }
 
-.global-metric hr {
-    margin: 22px 0;
-    opacity: 0.3;
+.global-metric .metric-checklist input {
+    margin-left: 20px;
+    margin-right: 5px;
 }
 
-.global-metric .Checklist input {
-    margin-right: 10px;
-}
-
-.global-metric .Checklist label {
+.global-metric .metric-checklist label {
     display: block;
+    font-family: "Geist", sans-serif;
+    font-weight: 600;
+    font-style: normal;
+    color: var(--primary);
     margin-bottom: 8px;
-    font-size: 16px;
+    font-size: 14px;
 }
 
-/* Title Panel */
+/* ----- Title Panel ----- */
 #title-panel {
     grid-area: title;
 }

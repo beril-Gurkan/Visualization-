@@ -57,9 +57,12 @@ def compute_scores(df: pd.DataFrame, selected_keys: list[str], weights: dict[str
 
 @app.callback(
     Output("globe-map", "figure"),
-    Input("metric-checklist", "value"),
-    Input("metric-checklist-dem", "value"),
-    Input("metric-checklist-sus", "value"),
+    Input("metric-checklist-unemployment", "value"),
+    Input("metric-checklist-gdp", "value"),
+    Input("metric-checklist-youth-unemp", "value"),
+    Input("metric-checklist-pop-growth", "value"),
+    Input("metric-checklist-elec-access", "value"),
+    Input("metric-checklist-elec-capacity", "value"),
     Input("w-unemployment", "value"),
     Input("w-gdp_pc", "value"),
     Input("w-youth_unemp", "value"),
@@ -70,14 +73,17 @@ def compute_scores(df: pd.DataFrame, selected_keys: list[str], weights: dict[str
     Input("clear-selected", "n_clicks"),
 )
 def update_global_map(
-    econ_sel, dem_sel, sus_sel,
+    unemp_sel, gdp_sel, youth_sel, pop_sel, access_sel, cap_sel,
     w_unemp, w_gdp, w_youth, w_pop, w_access, w_cap,
     selected_countries, clear_clicks
 ):
-    econ_sel = econ_sel or []
-    dem_sel = dem_sel or []
-    sus_sel = sus_sel or []
-    selected_metric_keys = econ_sel + dem_sel + sus_sel
+    unemp_sel = unemp_sel or []
+    gdp_sel = gdp_sel or []
+    youth_sel = youth_sel or []
+    pop_sel = pop_sel or []
+    access_sel = access_sel or []
+    cap_sel = cap_sel or []
+    selected_metric_keys = unemp_sel + gdp_sel + youth_sel + pop_sel + access_sel + cap_sel
 
     df = attach_country_meta(get_data()).dropna(subset=["iso3"]).copy()
 

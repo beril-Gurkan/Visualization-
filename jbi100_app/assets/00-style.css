@@ -1,15 +1,10 @@
 @import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Geist:wght@100..900&display=swap");
 
 :root {
-    /* --background: #222222;
-    --panel-background: #353535;
-    --primary: #ffffff;
-    --secondary: #ababab;
-    --accent: #515151;
-    --main:  #5caed7; */
-    --background: #e5e5e5;
+    --background: #E5E5E5;
     --panel-background: #FFFFFF;
-    --primary: #222222;
+    --primary: #555555;
+    --secondary: #BBBBBB;
     --accent: #515151;
 }
 
@@ -62,7 +57,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     width: 100%;
     height: 100%;
     background-color: var(--panel-background);
@@ -78,7 +73,7 @@ body {
     font-family: "Bebas Neue", sans-serif;
     font-weight: 400;
     font-style: normal;
-    color: var(--accent);
+    color: var(--secondary);
     font-size: 1.75rem;
     align-self: flex-start;
 }
