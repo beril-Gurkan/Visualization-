@@ -1,56 +1,64 @@
+/* ----- Complex Metrics Panel ----- */
 #complex-metrics-panel {
     grid-area: metrics;
     overflow-y: auto;
 }
 
-#complex-metrics-panel h1 {
-    margin: 0 0 10px 0;
-    font-size: 32px;
-    font-weight: 500;
-}
-
 .complex-metric {
     width: 100%;
-    padding: 8px;
-    background-color: #f8f9fa;
-    border-radius: 6px;
+    border: 1px solid var(--background);
+    border-radius: 15px;
+    padding: 10px;
     margin-bottom: 10px;
 }
 
-.complex-metric h2 {
-    font-size: 14px;
-    margin-bottom: 4px;
-    font-weight: 500;
-}
-
-.complex-metric .metric-toggle {
+.complex-metric .metric-header {
     display: flex;
-    align-items: center;
+    justify-content: space-between;
     margin-bottom: 5px;
 }
 
-.complex-metric .metric-toggle .Checklist {
-    display: inline-block;
-    margin-right: 8px;
+.complex-metric h2 {
+    font-family: "Geist", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 800;
+    font-style: normal;
+    color: var(--primary);
+    font-size: 1rem;
 }
 
+.complex-metric .metric-checklist input {
+    width: 1rem;
+    height: 1rem;
+}
 .complex-metric .metric-description {
-    font-size: 11px;
-    color: #888;
-    margin-left: 28px;
-    margin-bottom: 8px;
+    display: block;
+    font-family: "Geist", sans-serif;
+    font-weight: 300;
+    font-style: normal;
+    color: var(--primary);
+    font-size: 0.75rem;
+    margin-bottom: 15px;
 }
 
 .complex-metric .importance-label {
-    margin-top: 8px;
-    font-size: 12px;
-    color: #666;
+    color: var(--secondary);
+    text-align: center;
+    font-size: 1rem;
+    margin: 4px 0 2px;
 }
 
+.complex-metric .slider-spacer {
+    height: 14px;
+}
+
+
+/* ----- Plot Panel ----- */
 #plot-panel {
     grid-area: plot;
 }
 
+/* ----- Detailed Info Panel ----- */
 #detailed-info-panel {
     grid-area: info-left;
     overflow: hidden;
@@ -155,6 +163,7 @@
     text-align: center;
 }
 
+/* ----- Mini Map Panel ----- */
 #mini-map-panel {
     grid-area: map;
     position: relative;
@@ -167,7 +176,6 @@
     width: 100%;
 }
 
-/* Overlay - hidden by default */
 .mini-map-overlay {
     position: absolute;
     top: 0;
@@ -185,7 +193,6 @@
     background-color: rgba(255, 255, 255, 0);
 }
 
-/* Show overlay with blur on hover */
 #mini-map-panel:hover .mini-map-overlay {
     opacity: 1;
     pointer-events: auto;
@@ -194,7 +201,6 @@
     background-color: rgba(255, 255, 255, 0.3);
 }
 
-/* Text styling */
 .mini-map-overlay p {
     font-size: 18px;
     font-weight: 600;
@@ -203,6 +209,7 @@
     transition: color 0.2s ease;
 }
 
+/* ----- Ranking Panel ----- */
 #selected-ranking-panel {
     grid-area: ranking;
     overflow-y: auto;
@@ -262,7 +269,7 @@
     flex-shrink: 0;
 }
 
-/* Scatterplot Section */
+/* ----- Scatterplot Panel ----- */
 .scatterplot-section {
     flex: 1;
     display: flex;

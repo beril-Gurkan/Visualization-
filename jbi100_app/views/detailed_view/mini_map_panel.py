@@ -21,7 +21,7 @@ def mini_map_panel():
                 html.Div(
                     className="mini-map-overlay",
                     children=[
-                        html.P("Click here to go back to global overview"),
+                        html.P("Click here to go back to Global Overview"),
                     ]
                 ),
                 href="/"
