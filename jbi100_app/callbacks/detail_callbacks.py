@@ -388,7 +388,10 @@ def update_detailed_scatterplot(
     selected_country_names = set(df_plot.loc[country_upper.isin(selected_set), "Country"].astype(str))
     selected_country_names |= set(df_plot.loc[iso_upper.isin(selected_set), "Country"].astype(str))
 
-    base_df = df_plot[["Country", x_axis, y_axis, "iso3"]].copy()
+    if x_axis == y_axis:
+        base_df = df_plot[["Country", x_axis, "iso3"]].copy()
+    else:
+        base_df = df_plot[["Country", x_axis, y_axis, "iso3"]].copy()
 
     # Build base figure via Scatterplot component (unchanged file), then enhance it
     sp = Scatterplot("Detailed Scatterplot", x_axis, y_axis, base_df)
@@ -443,14 +446,41 @@ def update_detailed_scatterplot(
         )
 
     fig.update_layout(
-        margin=dict(l=55, r=15, t=15, b=60),
-        xaxis=dict(title=x_label, title_font_size=11, title_standoff=10),
-        yaxis=dict(title=y_label, title_font_size=11, title_standoff=10),
+        title=dict(
+            text=f"{x_label} vs {y_label}",
+            font=dict(size=13),
+            y=0.97,
+            x=0.01,
+            xanchor="left",
+            yanchor="top",
+        ),
+        margin=dict(l=55, r=15, t=40, b=60),
+        xaxis=dict(
+            title=x_label,
+            title_font_size=11,
+            title_standoff=10,
+            range=[-0.02, 1.02],
+        ),
+        yaxis=dict(
+            title=y_label,
+            title_font_size=11,
+            title_standoff=10,
+            range=[-0.02, 1.02],
+        ),
         hovermode="closest",
         clickmode="event",
         dragmode="select",
-        transition=dict(duration=500, easing="cubic-in-out"),
-        uirevision=f"scatter-{int(brush_rev or 0)}",
+        uirevision="scatter-stable",
+        transition=dict(
+            duration=400,
+            easing="cubic-in-out",
+        ),
+    )
+
+    fig.update_traces(
+        marker=dict(
+            sizemode="diameter",
+        ),
     )
     return fig
 

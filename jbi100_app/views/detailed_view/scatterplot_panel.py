@@ -61,6 +61,8 @@ def scatterplot_panel():
                 id="detailed-scatterplot",
                 config={"displayModeBar": True, "responsive": True},
                 style={"flex": "1", "width": "100%"},
+                animate=True,
+                animation_options={"frame": {"redraw": True}, "transition": {"duration": 400, "easing": "cubic-in-out"}},
             ),
         ]
     )
