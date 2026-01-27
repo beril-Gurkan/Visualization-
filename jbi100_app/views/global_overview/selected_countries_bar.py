@@ -9,21 +9,26 @@ def selected_countries_bar():
                 [
                     html.Div(
                         [
-                            html.Div("Selected countries", className="countries-label"),
+                            html.H2("Selected countries", className="panel-title"),
                             html.Div(id="selected-countries-label"),
                         ],
                         className="countries-info",
                     ),
-                    html.Button(
-                        "Clear",
-                        id="clear-selected",
-                        n_clicks=0,
-                    ),
-                    dcc.Link(
-                        html.Button(
-                            "Continue",
-                        ),
-                        href="/detailed"
+                    html.Div(
+                        [
+                            html.Button(
+                                "Clear",
+                                id="clear-selected",
+                                n_clicks=0,
+                            ),
+                            dcc.Link(
+                                html.Button(
+                                    "Continue",
+                                ),
+                                href="/detailed"
+                            ),
+                        ],
+                        className="buttons-group",
                     ),
                 ],
                 className="wrapper"

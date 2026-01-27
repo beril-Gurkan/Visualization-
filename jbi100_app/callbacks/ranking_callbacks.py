@@ -51,12 +51,13 @@ def compute_scores(df: pd.DataFrame, selected_keys: list[str], weights: dict[str
     norm_cols = [METRICS[k]["col"] + "__norm" for k in selected_keys]
     work["score"] = (work[norm_cols].values * w).sum(axis=1)
 
-    note = f"Included {kept}/{total} countries (excluded {total-kept} due to missing data)."
+    note = f"{kept}/{total} countries included ({total-kept} excluded due to missing data)."
     return work[["Country", "iso3", "score"] + cols], note
 
 
 @app.callback(
     Output("globe-map", "figure"),
+    Output("map-subtitle", "children"),
     Input("metric-checklist-unemployment", "value"),
     Input("metric-checklist-gdp", "value"),
     Input("metric-checklist-youth-unemp", "value"),
@@ -100,10 +101,9 @@ def update_global_map(
             bgcolor="white",
         )
         fig.update_layout(
-            title="Select at least one metric to compute a score.",
-            margin=dict(l=0, r=0, t=60, b=0),
+            margin=dict(l=0, r=0, t=0, b=0),
         )
-        return fig
+        return fig, "Select at least one metric to compute a score."
 
     weights = {
         "unemployment": w_unemp or 0,
@@ -122,10 +122,9 @@ def update_global_map(
             color="score",
         )
         fig.update_layout(
-            title=note,
-            margin=dict(l=0, r=0, t=60, b=0),
+            margin=dict(l=0, r=0, t=0, b=0),
         )
-        return fig
+        return fig, note
 
     selected_set = {
         str(x).strip().upper()
@@ -196,12 +195,11 @@ def update_global_map(
     clear_clicks = clear_clicks or 0
 
     fig.update_layout(
-        title=f"Global Composite Score (weighted) — {note}",
-        margin=dict(l=0, r=0, t=60, b=0),
+        margin=dict(l=0, r=0, t=0, b=0),
         dragmode="pan",
         hovermode="closest",
-        clickmode="event",  # ✅ FIX: no Plotly selection fade
+        clickmode="event",  # no Plotly selection fade
         uirevision=f"globe-map-clear-{clear_clicks}",
     )
 
-    return fig
+    return fig, f"Colored based on weighted Global Metrics composite score: {note}"

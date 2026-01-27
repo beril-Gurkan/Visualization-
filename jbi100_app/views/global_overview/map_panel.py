@@ -5,6 +5,8 @@ def map_panel():
     return html.Div(
         className="panel", id="map-panel",
         children=[
+            html.H2("Global Map", className="panel-title"),
+            html.Div(id="map-subtitle",),
             dcc.Graph(
                 id="globe-map",
                 className="graph-container",

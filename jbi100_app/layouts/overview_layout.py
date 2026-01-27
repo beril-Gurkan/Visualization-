@@ -12,7 +12,7 @@ def overview_layout():
             # Title panel
             html.Div(
                 id="title-panel",
-                children=[html.H1("Global Overview")],
+                children=[html.H1("GLOBAL OVERVIEW")],
             ),
 
             # Components
