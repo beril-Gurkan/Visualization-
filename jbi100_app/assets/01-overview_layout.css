@@ -113,34 +113,3 @@
     height: 100%;
     min-height: 0;
 }
-
-/* Ranking Panel */
-#ranking-panel {
-    grid-area: ranking;
-    margin: 0;
-    padding: 12px;
-    border-radius: 12px;
-    border: 1px solid rgba(0, 0, 0, 0.12);
-    background: white;
-    display: flex;
-    flex-direction: column;
-    display: none;
-}
-
-#ranking-panel .ranking-header {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    margin-bottom: 10px;
-}
-
-#ranking-panel .ranking-header .Dropdown {
-    width: 220px;
-}
-
-#ranking-panel #ranking-container {
-    max-height: 22vh;
-    overflow-y: auto;
-    padding-right: 6px;
-    flex: 1;
-}
