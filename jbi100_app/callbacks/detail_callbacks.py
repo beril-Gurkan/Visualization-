@@ -22,7 +22,7 @@ from jbi100_app.data import (
     economic_resilience_score,
 )
 from jbi100_app.utils.country_meta import attach_country_meta
-from jbi100_app.views.scatterplot import Scatterplot
+from jbi100_app.views.detailed_view.scatterplot import Scatterplot
 from jbi100_app.utils.complex_scores import compute_complex_scores
 
 # Color constants
