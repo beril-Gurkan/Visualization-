@@ -49,8 +49,12 @@ class Scatterplot(html.Div):
             return fig
 
         df_plot = self.df.copy()
-        df_plot[xcol] = df_plot[xcol].astype(float)
-        df_plot[ycol] = df_plot[ycol].astype(float)
+        # Handle case when x and y columns are the same
+        if xcol == ycol:
+            df_plot[xcol] = df_plot[xcol].astype(float)
+        else:
+            df_plot[xcol] = df_plot[xcol].astype(float)
+            df_plot[ycol] = df_plot[ycol].astype(float)
 
         countries = df_plot["Country"].astype(str)
 
@@ -62,11 +66,15 @@ class Scatterplot(html.Div):
             marker_opacity = 0.85
             marker_size = 8
 
+        # Extract x and y values as arrays to avoid issues with duplicate column names
+        x_vals = df_plot[xcol].values if xcol in df_plot.columns else []
+        y_vals = df_plot[ycol].values if ycol in df_plot.columns else x_vals
+
         fig = go.Figure(
             data=[
                 go.Scatter(
-                    x=df_plot[xcol],
-                    y=df_plot[ycol],
+                    x=x_vals,
+                    y=y_vals,
                     mode="markers",
                     customdata=countries,
                     text=countries,

@@ -1,5 +1,50 @@
 #complex-metrics-panel {
     grid-area: metrics;
+    overflow-y: auto;
+}
+
+#complex-metrics-panel h1 {
+    margin: 0 0 10px 0;
+    font-size: 32px;
+    font-weight: 500;
+}
+
+.complex-metric {
+    width: 100%;
+    padding: 8px;
+    background-color: #f8f9fa;
+    border-radius: 6px;
+    margin-bottom: 10px;
+}
+
+.complex-metric h2 {
+    font-size: 14px;
+    margin-bottom: 4px;
+    font-weight: 500;
+}
+
+.complex-metric .metric-toggle {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.complex-metric .metric-toggle .Checklist {
+    display: inline-block;
+    margin-right: 8px;
+}
+
+.complex-metric .metric-description {
+    font-size: 11px;
+    color: #888;
+    margin-left: 28px;
+    margin-bottom: 8px;
+}
+
+.complex-metric .importance-label {
+    margin-top: 8px;
+    font-size: 12px;
+    color: #666;
 }
 
 #plot-panel {
@@ -7,7 +52,107 @@
 }
 
 #detailed-info-panel {
-    grid-area: info;
+    grid-area: info-left;
+    overflow: hidden;
+}
+
+#scatterplot-panel {
+    grid-area: info-right;
+    overflow: hidden;
+}
+
+#detailed-info-content {
+    width: 100%;
+    height: 100%;
+}
+
+.detailed-info-placeholder {
+    color: #666;
+    font-size: 13px;
+    text-align: center;
+    padding: 30px 15px;
+}
+
+.detail-header .detail-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 2px;
+    color: #1f2937;
+}
+
+.detail-header .detail-subtitle {
+    font-size: 10px;
+    color: #888;
+    margin-bottom: 10px;
+}
+
+.detail-content {
+    display: flex;
+    gap: 15px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+
+.stats-column {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 0 0 auto;
+    width: 90px;
+    min-width: 90px;
+    max-width: 90px;
+}
+
+.stat-item {
+    padding: 4px 6px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    border-left: 2px solid #3b82f6;
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-item .stat-label {
+    font-size: 10px;
+    color: #666;
+    margin-bottom: 2px;
+}
+
+.stat-item .stat-value-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+.stat-item .stat-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.stat-item .stat-rank {
+    font-size: 10px;
+    color: #999;
+    flex-shrink: 0;
+}
+
+.radar-column {
+    flex: 1;
+    min-width: 200px;
+}
+
+.radar-column .radar-title {
+    font-size: 10px;
+    color: #666;
+    margin-bottom: 5px;
+    text-align: center;
+}
+
+.radar-placeholder {
+    color: #999;
+    font-size: 12px;
+    text-align: center;
 }
 
 #mini-map-panel {
@@ -60,38 +205,346 @@
 
 #selected-ranking-panel {
     grid-area: ranking;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
 }
 
-/* Detailed info panel styling */
-.detailed-info .detail-header {
-    border-bottom: 1px solid #e6e6e6;
-    padding-bottom: 8px;
+.ranking-controls {
+    margin-bottom: 3px;
+    flex-shrink: 0;
 }
 
-.detailed-info .detail-title {
-    margin: 0;
-    font-size: 1.8rem;
-    font-weight: 700;
+.ranking-controls .control-group {
+    margin-bottom: 6px;
 }
 
-.detailed-info .detail-subtitle {
-    margin: 0;
-    font-size: 1.2rem;
-    color: #444;
+.ranking-controls .control-label {
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    display: block;
 }
 
-.detailed-info .stats-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+.ranking-controls .Dropdown {
+    font-size: 12px;
+    width: 280px !important;
+    min-width: 280px !important;
+}
+
+.ranking-controls .Dropdown > div {
+    width: 100% !important;
+}
+
+.ranking-controls .Select {
+    width: 280px !important;
+    min-width: 280px !important;
+}
+
+.ranking-controls .Select-control {
+    width: 100% !important;
+}
+
+#detailed-ranking-metric {
+    width: 280px !important;
+    min-width: 280px !important;
+}
+
+#detailed-ranking-bar {
+    width: 100%;
+    height: 450px;
+    flex-shrink: 0;
+}
+
+.ranking-divider {
+    margin: 2px 0;
+    border-color: #e5e5e5;
+    flex-shrink: 0;
+}
+
+/* Scatterplot Section */
+.scatterplot-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 320px;
+    min-width: 320px;
+    overflow: hidden;
+}
+
+.scatterplot-section h3 {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    flex-shrink: 0;
+}
+
+.axis-controls {
+    display: flex;
+    margin-bottom: 6px;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.axis-control {
+    flex: 1;
+    min-width: 120px;
+}
+
+.axis-control .axis-label {
+    font-size: 11px;
+    font-weight: 500;
+    margin-bottom: 3px;
+    display: block;
+}
+
+.axis-control .Dropdown {
+    font-size: 11px;
+    width: 100% !important;
+}
+
+.axis-control .Select {
+    width: 100% !important;
+}
+
+#scatterplot-panel .axis-control .Dropdown {
+    min-width: 200px !important;
+}
+
+#scatterplot-panel .axis-control {
+    min-width: 200px !important;
+}
+
+.scatterplot-hint {
+    font-size: 10px;
+    color: #888;
+    margin-bottom: 3px;
+    flex-shrink: 0;
+}
+
+#detailed-scatterplot {
+    width: 100%;
+    flex: 1;
+    min-height: 220px;
+    max-height: calc(100% - 90px);
+    overflow: hidden;
+}
+
+#detailed-selected-country-indicator {
+    margin-top: 4px;
+    font-size: 11px;
+    text-align: center;
+    color: #666;
+    padding: 4px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    flex-shrink: 0;#detailed-selected-country-indicator strong {
+    color: #3b82f6;
+}}
+
+/* Metric cards small multiples */
+#plot-panel .panel-subtitle {
+    opacity: 0.75;
+    font-size: 0.95rem;
+    align-self: flex-start;
+}
+
+/* Plot panel header */
+#plot-panel .plot-panel-header{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+#plot-panel .plot-panel-title-wrap{
+    display: flex;
+    align-items: center;
     gap: 10px;
 }
 
-.detailed-info .stat-label {
-    font-size: 1.2rem;
-    color: #555;
+#plot-panel .info-icon{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 1px solid rgba(0,0,0,0.35);
+    font-size: 12px;
+    font-weight: 700;
+    opacity: 0.75;
+    cursor: default;
+    user-select: none;
 }
 
-.detailed-info .stat-value {
-    font-size: 1.3rem;
+#plot-panel .expand-clear-btn{
+    align-self: flex-start;
+    border: 1px solid rgba(0,0,0,0.18);
+    background: white;
+    border-radius: 10px;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+/* Default small multiples grid  */
+#plot-panel .metric-cards-grid{
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+    grid-auto-rows: minmax(0, 1fr);
+    gap: 10px;
+}
+
+/* Card base */
+#plot-panel .metric-card{
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    border: 1px solid rgba(0, 0, 0, 0.10);
+    border-radius: 12px;
+    padding: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+/*  Metric card header row */
+#plot-panel .metric-card-header{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+#plot-panel .metric-card-title-wrap{
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#plot-panel .metric-card-title{
+    margin: 0;
+    font-size: 1.1rem;
     font-weight: 700;
+    color: var(--accent);
+}
+
+#plot-panel .expand-btn{
+    border: 1px solid rgba(0,0,0,0.18);
+    background: white;
+    border-radius: 10px;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+/*  Graph fills card  */
+#plot-panel .metric-card .graph-container{
+    flex: 1;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+}
+
+/*  Expanded mode: left sidebar stack + right main */
+#plot-panel .metric-cards-grid.expanded-mode{
+    grid-template-columns: 0.8fr 2.2fr;              /* sidebar | detail */
+    grid-template-rows: repeat(4, minmax(0, 1fr));   /* 4 slots in the sidebar */
+}
+
+/* Expanded card becomes the right-hand detail area */
+#plot-panel .metric-card.expanded{
+    grid-column: 2 / 3;
+    grid-row: 1 / -1;
+}
+
+/* Collapsed cards stack in the left column */
+#plot-panel .metric-card.collapsed{
+    grid-column: 1 / 2;
+    opacity: 0.95;
+}
+
+#plot-panel .metric-card.collapsed .metric-card-title{
+    font-size: 1.0rem;
+}
+
+/* Ensure graphs still fill in both states */
+#plot-panel .metric-card.collapsed .graph-container,
+#plot-panel .metric-card.expanded .graph-container{
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+}
+
+/* Collapsed metric cards: hide plotly modebar */
+#plot-panel .metric-card.collapsed .modebar {
+    display: none !important;
+}
+
+#plot-panel .metric-card.collapsed {
+    padding: 8px;
+}
+
+#plot-panel .metric-card.collapsed .js-plotly-plot,
+#plot-panel .metric-card.collapsed .plot-container,
+#plot-panel .metric-card.collapsed .svg-container {
+    height: 100% !important;
+    width: 100% !important;
+}
+
+/* === Info Button Hover to Show Stats === */
+.stats-wrapper {
+    position: relative;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.info-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #3b82f6;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    transition: background 0.2s;
+}
+
+.info-button:hover {
+    background: #2563eb;
+}
+
+.stats-column-hidden {
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+    flex: 0 0 auto;
+    width: 180px;
+    min-width: 180px;
+    max-width: 180px;
+    position: absolute;
+    left: 30px;
+    top: 0;
+    background: white;
+    padding: 8px;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 100;
+}
+
+.stats-wrapper:hover .stats-column-hidden,
+.info-button:hover + .stats-column-hidden,
+.stats-column-hidden:hover {
+    display: flex;
 }
