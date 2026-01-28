@@ -62,11 +62,7 @@
 #detailed-info-panel {
     grid-area: info-left;
     overflow: hidden;
-}
-
-#scatterplot-panel {
-    grid-area: info-right;
-    overflow: hidden;
+    gap: 0;
 }
 
 #detailed-info-content {
@@ -75,17 +71,29 @@
 }
 
 .detailed-info-placeholder {
-    color: #666;
-    font-size: 13px;
+    font-family: "Geist", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    color: var(--secondary);
+    font-size: 1.5rem;
     text-align: center;
-    padding: 30px 15px;
+    padding: 30% 15px;
 }
 
+.detail-title-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+}
 .detail-header .detail-title {
-    font-size: 16px;
-    font-weight: 600;
-    margin-bottom: 2px;
-    color: #1f2937;
+    font-family: "Geist", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 700;
+    font-style: normal;
+    color: var(--primary);
+    font-size: 1.5rem;
 }
 
 .detail-header .detail-subtitle {
@@ -121,8 +129,12 @@
 }
 
 .stat-item .stat-label {
-    font-size: 10px;
-    color: #666;
+    font-family: "Geist", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    color: var(--accent);
+    font-size: 0.75rem;
     margin-bottom: 2px;
 }
 
@@ -130,18 +142,25 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
 }
 
 .stat-item .stat-value {
-    font-size: 14px;
+    font-family: "Geist", sans-serif;
+    font-optical-sizing: auto;
     font-weight: 600;
-    color: #1f2937;
+    font-style: normal;
+    color: var(--primary);
+    font-size: 1rem;
 }
 
 .stat-item .stat-rank {
-    font-size: 10px;
-    color: #999;
+    font-family: "Geist", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    color: var(--accent);
+    font-size: 0.75rem;
     flex-shrink: 0;
 }
 
@@ -151,8 +170,12 @@
 }
 
 .radar-column .radar-title {
-    font-size: 10px;
-    color: #666;
+    font-family: "Geist", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    color: var(--primary);
+    font-size: 1rem;
     margin-bottom: 5px;
     text-align: center;
 }
@@ -202,7 +225,10 @@
 }
 
 .mini-map-overlay p {
-    font-size: 18px;
+    font-family: "Geist", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
+    font-size: 1.25rem;
     font-weight: 600;
     color: var(--primary);
     text-align: center;
@@ -227,8 +253,12 @@
 }
 
 .ranking-controls .control-label {
-    font-size: 12px;
+    font-family: "Geist", sans-serif;
+    font-optical-sizing: auto;
     font-weight: 600;
+    font-style: normal;
+    color: var(--primary);
+    font-size: 0.75rem;
     margin-bottom: 4px;
     display: block;
 }
@@ -244,6 +274,12 @@
 }
 
 .ranking-controls .Select {
+    font-family: "Geist", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 600;
+    font-style: normal;
+    color: var(--primary);
+    font-size: 1rem;
     width: 280px !important;
     min-width: 280px !important;
 }
@@ -269,7 +305,21 @@
     flex-shrink: 0;
 }
 
+#ranking-subtitle {
+    font-family: "Geist", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    color: var(--primary);
+    font-size: 1rem;
+}
+
 /* ----- Scatterplot Panel ----- */
+#scatterplot-panel {
+    grid-area: info-right;
+    overflow: hidden;
+}
+
 .scatterplot-section {
     flex: 1;
     display: flex;

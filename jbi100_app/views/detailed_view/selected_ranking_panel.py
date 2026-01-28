@@ -38,6 +38,9 @@ def selected_ranking_panel():
                 ],
             ),
             
+            # Dynamic subtitle
+            html.Div(id="ranking-subtitle"),
+            
             # Ranking bar chart
             dcc.Graph(
                 id="detailed-ranking-bar",

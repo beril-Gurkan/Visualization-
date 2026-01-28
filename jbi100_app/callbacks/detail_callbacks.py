@@ -676,8 +676,19 @@ def update_detailed_info(ranking_click, scatter_click, selected_countries):
         html.Div(
             className="detail-header",
             children=[
-                html.H3(country_display, className="detail-title"),
-                html.P("Key Statistics & Complex Metrics", className="detail-subtitle"),
+                html.Div(
+                    className="detail-title-wrapper",
+                    children=[
+                        html.H3(country_display, className="detail-title"),
+                        html.Div(
+                            className="stats-wrapper",
+                            children=[
+                                html.Button("i", className="info-button", title="Hover for stats"),
+                                html.Div(stats_children, className="stats-column-hidden"),
+                            ]
+                        ),
+                    ]
+                ),
             ]
         ),
         
@@ -685,14 +696,6 @@ def update_detailed_info(ranking_click, scatter_click, selected_countries):
         html.Div(
             className="detail-content",
             children=[
-                # Left: Stats (hidden by default, shown on Info button hover)
-                html.Div(
-                    className="stats-wrapper",
-                    children=[
-                        html.Button("i", className="info-button", title="Hover for stats"),
-                        html.Div(stats_children, className="stats-column-hidden"),
-                    ]
-                ),
                 # Right: Radar
                 html.Div(
                     className="radar-column",
