@@ -9,7 +9,7 @@ def scatterplot_panel():
         id="scatterplot-panel",
         className="panel",
         children=[
-            html.H2("Metric Comparison", className="panel-title"),
+            html.H2("Complex Metrics Comparison", className="panel-title"),
             
             # Axis selection dropdowns
             html.Div(
@@ -54,7 +54,10 @@ def scatterplot_panel():
                 ],
             ),
             
-            html.P("Click a point to select a country", className="scatterplot-hint"),
+            # Dynamic subtitle
+            html.P("Click on a point to select a country", className="scatterplot-hint"),
+            html.Div(id="scatterplot-subtitle"),
+            
             
             # Scatterplot graph
             dcc.Graph(

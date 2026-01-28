@@ -9,7 +9,7 @@
     border: 1px solid var(--background);
     border-radius: 15px;
     padding: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
 }
 
 .complex-metric .metric-header {
@@ -299,8 +299,12 @@
 }
 
 .axis-control .axis-label {
-    font-size: 11px;
-    font-weight: 500;
+    font-family: "Geist", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 600;
+    font-style: normal;
+    color: var(--primary);
+    font-size: 0.75rem;
     margin-bottom: 3px;
     display: block;
 }
@@ -311,6 +315,12 @@
 }
 
 .axis-control .Select {
+    font-family: "Geist", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 600;
+    font-style: normal;
+    color: var(--primary);
+    font-size: 1rem;
     width: 100% !important;
 }
 
@@ -322,11 +332,22 @@
     min-width: 200px !important;
 }
 
+#scatterplot-subtitle {
+    font-family: "Geist", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    color: var(--primary);
+    font-size: 1rem;
+}
+
 .scatterplot-hint {
-    font-size: 10px;
-    color: #888;
-    margin-bottom: 3px;
-    flex-shrink: 0;
+    font-family: "Geist", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 600;
+    font-style: normal;
+    color: var(--secondary);
+    font-size: 0.875rem;
 }
 
 #detailed-scatterplot {

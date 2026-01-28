@@ -291,6 +291,7 @@ def update_detailed_ranking(
 # ===== SCATTERPLOT (built on Scatterplot component) =====
 @app.callback(
     Output("detailed-scatterplot", "figure"),
+    Output("scatterplot-subtitle", "children"),
     Input("selected-countries", "data"),
     Input("selected_country", "data"),
     Input("metric-brush", "data"),
@@ -341,8 +342,8 @@ def update_detailed_scatterplot(
             x=0.5, y=0.5, showarrow=False,
             font=dict(size=12, color="#888"),
         )
-        fig.update_layout(margin=dict(l=20, r=20, t=20, b=20))
-        return fig
+        fig.update_layout(margin=dict(l=20, r=20, t=0, b=20))
+        return fig, ""
 
     df = attach_country_meta(get_data())
     df_plot = df.merge(scores_df, on="Country", how="left")
@@ -355,8 +356,8 @@ def update_detailed_scatterplot(
             x=0.5, y=0.5, showarrow=False,
             font=dict(size=12, color="#888"),
         )
-        fig.update_layout(margin=dict(l=20, r=20, t=20, b=20))
-        return fig
+        fig.update_layout(margin=dict(l=20, r=20, t=0, b=20))
+        return fig, ""
 
     df_plot = df_plot.dropna(subset=[x_axis, y_axis, "iso3"]).copy()
     if df_plot.empty:
@@ -367,8 +368,8 @@ def update_detailed_scatterplot(
             x=0.5, y=0.5, showarrow=False,
             font=dict(size=12, color="#888"),
         )
-        fig.update_layout(margin=dict(l=20, r=20, t=20, b=20))
-        return fig
+        fig.update_layout(margin=dict(l=20, r=20, t=0, b=20))
+        return fig, ""
 
     selected_set = {str(x).upper().strip() for x in selected_countries if x}
 
@@ -446,15 +447,7 @@ def update_detailed_scatterplot(
         )
 
     fig.update_layout(
-        title=dict(
-            text=f"{x_label} vs {y_label}",
-            font=dict(size=13),
-            y=0.97,
-            x=0.01,
-            xanchor="left",
-            yanchor="top",
-        ),
-        margin=dict(l=55, r=15, t=40, b=60),
+        margin=dict(l=55, r=15, t=0, b=60),
         xaxis=dict(
             title=x_label,
             title_font_size=11,
@@ -482,7 +475,9 @@ def update_detailed_scatterplot(
             sizemode="diameter",
         ),
     )
-    return fig
+    
+    subtitle = f"{x_label} vs {y_label}"
+    return fig, subtitle
 
 
 # ===== DETAILED INFO PANEL (Stats + Radar side by side) =====
