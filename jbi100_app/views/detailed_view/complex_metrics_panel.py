@@ -1,11 +1,7 @@
 from dash import html, dcc
 
-
+# Panel displaying the 5 complex metrics as toggleable options.
 def complex_metrics_panel():
-    """
-    Panel displaying the 5 complex metrics as toggleable options.
-    Consistent with the global metrics_panel.py structure.
-    """
     return html.Div(
         id="complex-metrics-panel",
         className="panel",
