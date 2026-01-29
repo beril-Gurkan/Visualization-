@@ -2,7 +2,7 @@
 # Shows: list of selected countries with × buttons to deselect individual countries
 # Updates: when countries are clicked on map or selected via dropdown
 
-from dash import html
+from dash import html, dcc
 
 # Build the selection display bar
 def selected_countries_bar():
