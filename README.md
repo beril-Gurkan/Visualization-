@@ -108,6 +108,35 @@ The tool relies on the following existing libraries:
 - **Pandas DataFrames** - Data structure for handling CSV data
 - **NumPy arrays** - Numerical operations in metric calculations
 
+## Technical Complexity
+
+This project implements several advanced features that significantly increased development complexity:
+
+### 1. Callback Coordination and State Management
+The most challenging aspect was coordinating **16+ interactive callbacks** across two views (Global Overview and Detailed View) while maintaining consistent state:
+- **Shared state stores** (`dcc.Store` components) for selected countries, metric weights, and brush selections
+- **Bidirectional synchronization** - selections made in overview propagate to detailed view and vice versa
+- **Multi-source updates** - same data can be modified from map clicks, dropdown selections, or brush interactions
+
+### 2. Brushing and Linking Across Multiple Views
+Implementing coordinated brushing required:
+- **Dynamic uirevision management** - Plotly's mechanism to control when UI state resets vs. persists
+- **Selection state coordination** - tracking brushed points across scatterplot, histogram rug plots, and metric cards
+
+### 3. Complex Metric Calculations
+- **Five composite metrics** (ASF, IEC, SCC, WSI, ERS) each computed from 3-6 underlying data columns
+- **Weighted composite scoring** - dynamic recalculation when users adjust metric weights (5 metrics × 0-100 weight each)
+- **Normalization pipeline** - log transformation, percentile clipping, and min-max scaling for fair comparison
+
+### 4. Real-time Interactive Visualizations
+- **Choropleth map** with click selection and hover tooltips
+- **Scatterplot** with box-select brushing and linked highlighting
+- **Radar chart** comparing country metrics to global averages
+- **Histogram + rug plots** for distribution visualization with brushable data points
+- **Dynamic bar charts** that resize based on selection count
+
+The callback coordination was particularly challenging because changes in one component often triggered cascading updates across 4-5 other components, requiring careful management of callback chains and prevention of infinite update loops.
+
 ## AI Assistance Acknowledgment
 
 This project was developed with substantial assistance from AI coding tools, primarily GitHub Copilot and Claude. The extent of AI involvement includes:
