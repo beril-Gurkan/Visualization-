@@ -446,6 +446,9 @@ def update_detailed_scatterplot(
             f"{y_label}: %{{y:.3f}}<extra></extra>"
         )
 
+    # Use brush revision to allow selection state to reset after brushing
+    ui_rev = f"scatter-{brush_rev}" if brush_rev else "scatter-default"
+    
     fig.update_layout(
         margin=dict(l=55, r=15, t=0, b=60),
         xaxis=dict(
@@ -463,9 +466,10 @@ def update_detailed_scatterplot(
         hovermode="closest",
         clickmode="event",
         dragmode="select",
-        uirevision="scatter-stable",
+        uirevision=ui_rev,
+        selections=[],  # Clear any existing selection boxes
         transition=dict(
-            duration=400,
+            duration=300,
             easing="cubic-in-out",
         ),
     )
