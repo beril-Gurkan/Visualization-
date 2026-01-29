@@ -1,3 +1,7 @@
+# Mini-map callback - shows zoomed-in view of selected countries in detailed view
+# Highlights selected countries (orange) and currently clicked country (green)
+# Read-only map - no interaction, just visualization of current state
+
 from dash.dependencies import Input
 from dash import Output
 import plotly.graph_objects as go

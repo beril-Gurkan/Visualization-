@@ -1,11 +1,13 @@
+# Detailed info panel - displays country-specific metadata and key statistics
+# Shows: flag, name, region, population, GDP, area, energy consumption, etc.
+# Updates when: user clicks country on map/scatterplot or selects from dropdown
+# Also includes: radar chart comparing country to global averages
+
 from dash import html, dcc
 
-
+# Panel that displays detailed information about a selected country.
+# Includes key stats upon hovering and info button, along with a radar chart comparing to global averages.
 def detailed_info_panel():
-    """
-    Panel that displays detailed information about a selected country.
-    Includes key stats side-by-side with a radar chart comparing to global averages.
-    """
     return html.Div(
         id="detailed-info-panel",
         className="panel",

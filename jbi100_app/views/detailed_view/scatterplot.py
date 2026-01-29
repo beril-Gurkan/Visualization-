@@ -1,7 +1,12 @@
+# Scatterplot class - reusable component for 2D metric visualization
+# Creates: Plotly scatterplot with hover, click, and brush selection
+# Used in: detailed view for comparing any two complex metrics
+# Note: actual figure generation happens in detail_callbacks.py
+
 from dash import dcc, html
 import plotly.graph_objects as go
 
-
+# Scatterplot wrapper class providing structure for interactive scatter charts
 class Scatterplot(html.Div):
     def __init__(self, name, feature_x, feature_y, df):
         self.html_id = name.lower().replace(" ", "-")

@@ -1,3 +1,7 @@
+# Global map panel - interactive choropleth world map
+# Clicking countries adds them to selection (max 10)
+# Color-coded by selected metric from metrics panel
+
 from dash import dcc, html
 
 

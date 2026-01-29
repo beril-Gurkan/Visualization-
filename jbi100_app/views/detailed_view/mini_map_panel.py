@@ -1,6 +1,10 @@
+# Mini map panel - read-only world map showing selected countries highlighted
+# Purpose: provides geographic context in detailed view without interaction
+# Different from overview map: no clicking, just shows current selection in corner of detailed view
+
 from dash import html, dcc
 
-
+# Relates to the mini map panel in the corner of the detailed view.
 def mini_map_panel():
     return html.Div(
         id="mini-map-panel",

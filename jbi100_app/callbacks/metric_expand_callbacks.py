@@ -1,13 +1,18 @@
+# Metric expand callbacks - handle expand/collapse state of individual metric cards
+# Each of 5 metrics (ASF, IEC, SCC, WSI, ERS) can be expanded to show detailed histogram
+# Only one card can be expanded at a time to save vertical space
+# Expansion also depends on whether the metric toggle is enabled
+
 from dash.dependencies import Input, Output, State
 from dash import callback_context
 
 from jbi100_app.app_instance import app
 
-
+# IDs for the 5 metric cards
 CARD_IDS = ["asf", "iec", "scc", "wsi", "ers"]
 KEY_MAP = {"asf": "ASF", "iec": "IEC", "scc": "SCC", "wsi": "WSI", "ers": "ERS"}
 
-
+# Helper to map toggle states to enabled/disabled dict
 def _enabled_map(t_asf, t_iec, t_scc, t_wsi, t_ers):
     return {
         "asf": bool(t_asf),

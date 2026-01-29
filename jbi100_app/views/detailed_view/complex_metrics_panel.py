@@ -1,6 +1,11 @@
+# Complex metrics panel - sidebar with 5 toggleable weighted metrics
+# Each metric has: checkbox to enable/disable, weight slider (0-100), description
+# Metrics: ASF (workforce), IEC (energy), SCC (supply chain), WSI (wages), ERS (resilience)
+# These weights feed into the composite score calculation for scatterplot and ranking
+
 from dash import html, dcc
 
-# Panel displaying the 5 complex metrics as toggleable options.
+# Build the left sidebar panel with all 5 complex metrics
 def complex_metrics_panel():
     return html.Div(
         id="complex-metrics-panel",

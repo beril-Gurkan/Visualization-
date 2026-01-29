@@ -1,6 +1,11 @@
+# Selected ranking panel - shows computed composite scores for selected countries
+# Displays: bar chart ranking countries by weighted metric combination
+# Formula: (ASF × w1 + IEC × w2 + SCC × w3 + WSI × w4 + ERS × w5) / total_weights
+# Updates when: metric weights change or country selection changes
+
 from dash import html, dcc
 
-
+# Create ranking panel with composite score bar chart
 def selected_ranking_panel():
     """
     Panel that shows the ranking of all countries with selected ones highlighted.

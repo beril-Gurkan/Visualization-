@@ -1,3 +1,7 @@
+# Ranking callbacks - compute weighted scores and generate choropleth map
+# Takes selected metrics and weights from UI, normalizes each metric,
+# calculates weighted composite score, and displays on world map
+
 import numpy as np
 import pandas as pd
 import plotly.express as px
@@ -9,7 +13,7 @@ from jbi100_app.app_instance import app
 from jbi100_app.data import get_data
 from jbi100_app.utils.country_meta import attach_country_meta
 
-
+# Available metrics for ranking - each has display label, data column, and optimization direction
 METRICS = {
     "unemployment": {"label": "Unemployment rate (%)", "col": "Unemployment_Rate_percent", "higher_is_better": False},
     "gdp_pc": {"label": "GDP per capita (USD)", "col": "Real_GDP_per_Capita_USD", "higher_is_better": True},
@@ -20,6 +24,7 @@ METRICS = {
 }
 
 
+# Normalize metric to 0-1 range, optionally inverting if lower is better (e.g., unemployment)
 def _minmax(series: pd.Series, higher_is_better: bool) -> pd.Series:
     s = pd.to_numeric(series, errors="coerce")
     mn, mx = s.min(), s.max()
@@ -29,6 +34,8 @@ def _minmax(series: pd.Series, higher_is_better: bool) -> pd.Series:
     return norm if higher_is_better else (1 - norm)
 
 
+# Calculate weighted composite score from selected metrics
+# Returns: (DataFrame with scores, error_message) or (None, error_message)
 def compute_scores(df: pd.DataFrame, selected_keys: list[str], weights: dict[str, float]):
     cols = [METRICS[k]["col"] for k in selected_keys]
     work = df[["Country", "iso3"] + cols].copy()

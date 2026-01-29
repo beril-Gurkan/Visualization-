@@ -1,3 +1,6 @@
+# Overview layout - main landing page with global map and country selection
+# Contains: title bar, selected countries display, metric cards, and interactive world map
+
 from dash import html, dcc
 
 from jbi100_app.views.global_overview.metrics_panel import metrics_panel

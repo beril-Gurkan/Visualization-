@@ -1,3 +1,7 @@
+# Global metrics panel - allows users to select and weight metrics for map coloring
+# Contains checkboxes and sliders for 6 metrics across economic, social, and infrastructure categories
+# Selected metrics are used to compute composite score displayed on the world map
+
 from dash import html, dcc
 
 

@@ -1,3 +1,12 @@
+# Detailed analysis layout - accessed via 'Back' button from overview
+# Grid-based layout with 6 main panels:
+# - Complex metrics (left sidebar with toggleable weights)
+# - Plot panel (metric card visualizations with expand functionality)
+# - Country details (radar chart and stats for clicked country)
+# - Scatterplot (2D comparison of complex metrics with brushing)
+# - Mini map (focused view of selected countries)
+# - Ranking panel (sortable bar chart of countries by selected metric)
+
 from dash import html
 from jbi100_app.views.detailed_view.complex_metrics_panel import complex_metrics_panel
 from jbi100_app.views.detailed_view.plot_panel import plot_panel

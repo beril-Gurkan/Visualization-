@@ -1,4 +1,7 @@
-# jbi100_app/utils/country_meta.py
+# Country metadata utilities - attaches ISO3 country codes and region info to datasets
+# Handles name variations and fuzzy matching to link CIA data with ISO standard codes
+# Required for: map visualization (needs ISO3), country filtering, region grouping
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -10,8 +13,8 @@ import unicodedata
 import pandas as pd
 
 
-# Alias map for common mismatches between your dataset country names and the ISO table names.
-# NOTE: We normalize these keys/values at lookup time, so you can write them naturally here.
+# Maps non-standard country names in CIA data to ISO standard names
+# e.g., "Burma" -> "Myanmar", "Russia" -> "Russian Federation"
 ALIASES = {
     "BAHAMAS, THE": "BAHAMAS",
     "GAMBIA, THE": "GAMBIA",

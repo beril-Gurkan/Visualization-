@@ -1,6 +1,12 @@
+# Plot panel - container for metric visualization cards and info
+# Features: expandable cards for 5 metrics (ASF, IEC, SCC, WSI, ERS)
+# Each card shows: histogram (distribution), rug plot (individual countries), brushing
+# Info panel: explains interaction patterns (brushing, selection, highlighting)
+# Layout: vertical stack with expand/collapse functionality per metric
+
 from dash import html, dcc
 
-
+# Help text explaining visualization features and interactions
 INFO_TEXT = (
     "What you see in each card:\n"
     "• Grey bars: all countries (distribution)\n"

@@ -1,3 +1,9 @@
+# Data preprocessing pipeline - cleans and merges raw CSV datasets
+# Inputs: 5 separate CSV files (economy, demographics, energy, transportation, geography)
+# Outputs: countries_processed.csv (merged clean data), data_quality_report.csv (statistics)
+# Processing: numeric coercion, outlier clipping (1-99 percentile), NaN filling, column renaming
+# Run this script before launching the app to prepare data
+
 import pandas as pd
 import numpy as np
 from pathlib import Path

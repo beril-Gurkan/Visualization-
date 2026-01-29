@@ -1,9 +1,13 @@
+# Country selection callback - handles map clicks and selection state
+# Maintains a list of selected countries (up to 10)
+# Supports toggling selection on/off and clearing all selections
+
 from dash.dependencies import Input, Output, State
 from dash import callback_context
 
 from jbi100_app.app_instance import app
 
-
+# Limit to 10 countries to keep visualizations readable
 MAX_SELECTED_COUNTRIES = 10
 
 

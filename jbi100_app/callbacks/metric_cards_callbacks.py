@@ -1,3 +1,8 @@
+# Metric cards callbacks - manage the expandable metric visualization cards in detailed view
+# Features: histogram + rug plot for each of 5 complex metrics (ASF, IEC, SCC, WSI, ERS)
+# Supports: brushing/selection on rug plots, expand/collapse individual cards,
+# linked highlighting across cards and scatterplot
+
 from __future__ import annotations
 
 import numpy as np
@@ -11,32 +16,14 @@ from jbi100_app.app_instance import app
 from jbi100_app.data import get_data
 from jbi100_app.utils.country_meta import attach_country_meta
 
-# Reuse the "original" complex-score computation logic (from detailed callbacks)
+# Reuse complex score computation from shared utility
 from jbi100_app.utils.complex_scores import compute_complex_scores
 
-
-# keeping keys consistent with the figure calls ("ASF", "IEC", ...)
+# Five complex metrics displayed in cards
 METRIC_KEYS = ["ASF", "IEC", "SCC", "WSI", "ERS"]
 
-
+# Build dataset with all 5 metrics for visualization
 def _build_all_metrics_df() -> pd.DataFrame:
-    """
-    Builds a single DF with:
-      Country, iso3, ASF, IEC, SCC, WSI, ERS
-    using the "original" complex-score computation (detail_callbacks version).
-
-    NOTE:
-    - Preferred: jbi100_app.utils.complex_scores.compute_complex_scores
-    - Fallback: if that module doesn't exist yet, this will raise with a clear message.
-    """
-    if compute_complex_scores is None:
-        raise ImportError(
-            "Missing jbi100_app.utils.complex_scores.compute_complex_scores. "
-            "Create it by moving the _compute_complex_scores logic out of detail_callbacks "
-            "into a shared utility, then import it here."
-        )
-
-    # Compute all 5 metric columns (weights don't matter when you just need the raw columns).
     scores_df = compute_complex_scores(
         1, 1, 1, 1, 1,   # dummy equal weights
         True, True, True, True, True

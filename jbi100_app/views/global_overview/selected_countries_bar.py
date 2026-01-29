@@ -1,6 +1,10 @@
-from dash import html, dcc
+# Selected countries bar - displays currently selected countries with remove buttons
+# Shows: list of selected countries with × buttons to deselect individual countries
+# Updates: when countries are clicked on map or selected via dropdown
 
+from dash import html
 
+# Build the selection display bar
 def selected_countries_bar():
     return html.Div(
         className="panel", id="selected-countries-bar-panel",

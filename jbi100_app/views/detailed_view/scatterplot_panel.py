@@ -1,10 +1,11 @@
+# Scatterplot panel - 2D comparison of complex metrics
+# Features: axis selection dropdowns, brushing for multi-select, click for single country
+# Linked with: metric cards (brushing), ranking panel (selection), country details (click)
+
 from dash import html, dcc
 
-
+# Create scatterplot panel with axis controls and interactive graph
 def scatterplot_panel():
-    """
-    Panel containing the scatterplot for comparing countries on complex metrics.
-    """
     return html.Div(
         id="scatterplot-panel",
         className="panel",
