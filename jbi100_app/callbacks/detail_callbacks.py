@@ -275,7 +275,6 @@ def update_detailed_ranking(
 
     fig.update_layout(
         margin=dict(l=5, r=10, t=30, b=25),
-        height=450,
         xaxis_title=metric_label,
         xaxis_title_font_size=10,
         yaxis=dict(automargin=True, tickfont=dict(size=9), fixedrange=True),
@@ -283,6 +282,7 @@ def update_detailed_ranking(
         hovermode="closest",
         bargap=0.12,
         title=dict(text=title_text, font=dict(size=11), x=0.5, xanchor="center"),
+        autosize=True,
     )
 
     return fig
@@ -651,7 +651,7 @@ def update_detailed_info(ranking_click, scatter_click, selected_countries):
                     gridcolor="rgba(0,0,0,0.06)",
                 ),
                 angularaxis=dict(
-                    tickfont=dict(size=9, color="#555"),
+                    tickfont=dict(size=11, color="#555"),
                     gridcolor="rgba(0,0,0,0.06)",
                 ),
                 bgcolor="white",
@@ -663,15 +663,18 @@ def update_detailed_info(ranking_click, scatter_click, selected_countries):
                 y=-0.25,
                 xanchor="center",
                 x=0.5,
-                font=dict(size=9),
+                font=dict(size=10),
             ),
-            margin=dict(l=30, r=30, t=20, b=50),
+            margin=dict(l=15, r=15, t=30, b=40),
             paper_bgcolor="white",
+            height=320,
+            dragmode=False,
         )
 
         radar_element = dcc.Graph(
             figure=radar_fig,
             config={"displayModeBar": False, "responsive": True},
+            style={"height": "350px", "width": "100%"},
         )
     
     # ===== COMBINE STATS AND RADAR SIDE BY SIDE =====
