@@ -1,69 +1,130 @@
-# JBI100-example-app
+# Business Expander Tool
 
-## About this app
+A visualization tool for evaluating the economic and operational feasibility of international expansion. This interactive tool helps Market Entry Strategists, International Business Development Managers, and Strategic Planning Teams analyze countries across multiple metrics including workforce availability, energy capacity, supply chain connectivity, wage sustainability, and economic resilience.
 
-You can use this as a basic template for your JBI100 visualization project.
+All data is sourced from the CIA World Factbook Global Statistics Database (https://www.kaggle.com/datasets/kushagraarya10/cia-global-statistical-database).
 
-## Requirements
+## Prerequisites
 
-* Python 3 (add it to your path (system variables) to make sure you can access it from the command prompt)
-* Git (https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+* Python 3.8 or higher
+* pip (Python package manager)
+* Git (optional, for cloning the repository)
 
-## How to run this app
+## Installation
 
-We suggest you to create a virtual environment for running this app with Python 3. Clone this repository 
-and open your terminal/command prompt in the root folder.
+1. **Clone or download this repository**
+   ```
+   git clone https://github.com/beril-Gurkan/Visualization-
+   ```
+   Or download and extract the ZIP file.
 
+2. **Navigate to the project directory**
+   ```
+   cd Visualization-
+   ```
 
-download a zip file of this folder, unzip it and copy it to a folder of choice on your computer
+3. **Create a virtual environment** (recommended)
+   
+   **Windows:**
+   ```
+   python -m venv venv
+   venv\Scripts\activate
+   ```
+   
+   **macOS/Linux:**
+   ```
+   python3 -m venv venv
+   source venv/bin/activate
+   ```
 
-open a command prompt and run the following commands:
+4. **Install dependencies**
+   ```
+   pip install -r requirements.txt
+   ```
+
+## Running the Application
+
+1. **Ensure your virtual environment is activated**
+
+2. **Run the app**
+   ```
+   python app.py
+   ```
+
+3. **Open your browser** and navigate to the local address shown in the terminal (typically `http://127.0.0.1:8050`)
+## Dependencies
+
+* **dash** (>=2.0.0) - Web application framework
+* **plotly** - Interactive visualization library (installed with dash)
+* **pandas** (>=1.3.3) - Data manipulation and analysis
+* **numpy** (>=1.21.2) - Numerical computing
+
+## Project Structure
 
 ```
-> cd <path to you folder of choice>\dashframework-main\dashframework-main 
-> python -m venv venv
-
-```
-If python is not recognized use python3 instead
-
-In Windows: 
-
-```
-> venv\Scripts\activate
-
-```
-In Unix system:
-```
-> source venv/bin/activate
+./assets/              # CSS stylesheets
+./callbacks/           # Interactive callback functions
+./data_sets/           # CSV data files
+./layouts/             # Page layout definitions
+./utils/               # Helper functions and data processing
+./views/               # UI component definitions
 ```
 
-(Instead of a python virtual environment you can also use an anaconda virtual environment.
- 
-Requirements:
+## Implementation Details
 
-• Anaconda (https://www.anaconda.com/) or Miniconda (https://docs.conda.io/en/latest/miniconda.html)
+The following components were implemented from scratch for this project:
 
-• The difference is that Anaconda has a user-friendly UI but requires a lot of space, and Miniconda is Command Prompt based, no UI, but requires considerably less space.
+**Core Application Files:**
+- `app.py` - Application entry point and layout switcher (partially inspired by the default template)
+- `jbi100_app/app_instance.py` - Dash app initialization
+- `jbi100_app/data.py` - Data loading and preprocessing functions
 
-Then you should replace the lines: python -m venv venv and venv\Scripts\activate or source venv/bin/activate with the following:
+**Layout Components:**
+- `jbi100_app/layouts/overview_layout.py` - Global overview page structure
+- `jbi100_app/layouts/detailed_layout.py` - Detailed view page structure
 
-```
-> conda create -n yourenvname
-> conda activate yourenvname
-```
-)
+**View Components (all files in `jbi100_app/views/`):**
+- Global overview panels (map, metrics, country selection bar)
+- Detailed view panels (complex metrics, scatterplot, ranking, radar chart, mini-map)
 
-Install all required packages by running:
-```
-> pip install -r requirements.txt
-```
+**Callback Logic (all files in `jbi100_app/callbacks/`):**
+- Country selection and filtering
+- Interactive brushing and linking
+- Dynamic metric calculations
+- Chart updates and synchronization
 
-Run this app locally with:
-```
-> python app.py
-```
-You will get a http link, open this in your browser to see the results. You can edit the code in any editor (e.g. Visual Studio Code) and if you save it you will see the results in the browser.
+**Data Processing:**
+- `jbi100_app/utils/complex_scores.py` - Custom metric calculations
+- `jbi100_app/utils/country_meta.py` - Country metadata handling
+- `preprocessing.py` - Data cleaning and preparation
 
-## Resources
+**Styling:**
+- All CSS files in `jbi100_app/assets/` - Custom styling for panels and components
 
-* [Dash](https://dash.plot.ly/)
+### Library Components
+The tool relies on the following existing libraries:
+
+- **Plotly/Dash framework** - Used for creating interactive visualizations (scatter plots, bar charts, choropleth maps, radar charts)
+- **Pandas DataFrames** - Data structure for handling CSV data
+- **NumPy arrays** - Numerical operations in metric calculations
+
+## AI Assistance Acknowledgment
+
+This project was developed with substantial assistance from AI coding tools, primarily GitHub Copilot and Claude. The extent of AI involvement includes:
+
+**AI-Generated Code:**
+- Majority of callback functions in `jbi100_app/callbacks/` (interactive logic for filters, brushing, chart updates)
+- Significant portions of view components in `jbi100_app/views/` (UI component structure)
+- Data processing logic in `preprocessing.py`
+- A portion of CSS styling in `jbi100_app/assets/` (layout and visual design)
+- Code comments and documentation throughout the project
+
+**Human Contributions:**
+- Overall application architecture and design requirements
+- Metric definitions and weighting schemes
+- Data source selection and integration decisions
+- Testing, debugging, and validation of all functionality
+- UI/UX design direction and refinement
+- Integration and coordination of components
+
+All AI-generated code was reviewed, tested, modified, and validated by the development team. While AI provided implementation assistance, the conceptual design, requirements specification, and quality assurance were human-directed.
