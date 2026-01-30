@@ -142,17 +142,17 @@ The callback coordination was particularly challenging because changes in one co
 This project was developed with substantial assistance from AI coding tools, primarily GitHub Copilot and Claude. The extent of AI involvement includes:
 
 **AI-Generated Code:**
-- Majority of callback functions in `jbi100_app/callbacks/` (interactive logic for filters, brushing, chart updates)
-- Significant portions of view components in `jbi100_app/views/` (UI component structure)
-- Data processing logic in `preprocessing.py`
+- Code snippets in `jbi100_app/callbacks/` (interactive logic for filters, brushing, chart updates)
+- Assistance with portions of view components in `jbi100_app/views/` (UI component structure)
+- Drafting data processing logic in `preprocessing.py`
 - A portion of CSS styling in `jbi100_app/assets/` (layout and visual design)
 - Code comments and documentation throughout the project
 
 **Human Contributions:**
 - Overall application architecture and design requirements
-- Metric definitions and weighting schemes
-- Data source selection and integration decisions
-- Testing, debugging, and validation of all functionality
+- Metric definitions, workflow and weighting schemes
+- Data source selection and integration decisions (edge case handling and component integration)
+- Thorough testing, debugging, and validation of all functionality
 - UI/UX design direction and refinement
 - Integration and coordination of components
 
